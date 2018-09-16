@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/utk-cs/team-dijkstra#readme",
   "dependencies": {
-    "mysql": "^2.16.0"
+    "mysql": "^2.16.0",
+    "connect": "*",
+    "body-parser": "*"
   }
 }
