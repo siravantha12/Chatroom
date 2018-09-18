@@ -6,7 +6,7 @@ exports.mysqlCreateConnection = function() {
 	var con = mysql.createConnection({
 		host: "localhost",
 		user: "root",
-		password: "Imbroglio3724!",
+		password: "password",
 		database: "chat"
 	});
 
