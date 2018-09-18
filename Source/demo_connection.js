@@ -14,7 +14,7 @@ exports.mysqlCreateConnection = function() {
 }
 
 exports.mysqlValidateUser = function(firstName, lastName){
-	con.query("select * from chatusers where firstName = " + firstName " and lastName = " + lastName , function (err, result, fields){
+	con.query("select * from chatusers where firstName = " + firstName  + " and lastName = " + lastName , function (err, result, fields){
 		if(err) throw err;
 		console.log(result);
 	})
