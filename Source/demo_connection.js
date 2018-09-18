@@ -6,8 +6,16 @@ exports.mysqlCreateConnection = function() {
 	var con = mysql.createConnection({
 		host: "localhost",
 		user: "root",
-		password: "password"
+		password: "Imbroglio3724!",
+		database: "chat"
 	});
 
 	return con;
+}
+
+exports.mysqlValidateUser = function(firstName, lastName){
+	con.query("select * from chatusers where firstName = " + firstName " and lastName = " + lastName , function (err, result, fields){
+		if(err) throw err;
+		console.log(result);
+	})
 }
