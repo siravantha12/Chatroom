@@ -17,18 +17,18 @@ app.post('/',function(req,res){
 	parsedInfo.lastName = req.body.userLastName;
 	res.write("Your name is " + parsedInfo.firstName + " " + parsedInfo.lastName + "\n");
 	res.write("Attempting to connect to mysql database\n");
-	var con = mysqlConnection.mysqlCreateConnection();
 
-	con.connect(function(err) {
-		if(err) throw err;
+	console.log("validating user");
+	mysqlConnection.mysqlValidateUser(parsedInfo.firstName, parsedInfo.lastName, function(result){
+		if(result){
+			res.end("You are valid");
+		} else {
+			res.end("You are invalid");
+		}
 	});
 
-	con.query("select * from chatusers", function (err, result, fields){
-		if(err) throw err;
-		console.log(result);
-	});
-
-	res.end("Connected to database");
 });
 
-app.listen(3456);
+app.listen(3456, '0.0.0.0', function(){
+	console.log("listening on port: 3456");
+});
