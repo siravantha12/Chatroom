@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chatroom Sign Up</title>
+	<link rel="stylesheet" type="text/css" href="CSS/looks.css">
+
+</head>
+<body>
+	<h1>Welcome to Sign Up</h1>
+	
+	
+	<p>Please enter a Username that we can call you:  </p>
+<hr> <!--line-->
+		<br>
+
+		<!-- Forms -->
+		<form action="example.php" method="POST"><!--POST add data to a database--><!--GET search for data in a database-->
+			<div class= "username">
+				<label>Username</label>
+				<input type="text" name="Username">
+			</div>
+	<p>Please enter your first and last name</p>
+<hr>
+			<div class = "name">
+				<label>First Name</label>
+				<input type="text" name="firstName">
+			</div>	
+			<div class = "name">
+				<label>Last Name</label>
+				<input type="text" name="lastName">
+			</div>
+			<hr>
+			
+		<p>Please enter your email address</p>
+		<hr>	
+			<div class = "email">
+				<label>Email</label>
+				<input type="email" name="email">
+			</div>
+			<br>
+			<hr>
+			<br>
+			<div class = "gender">
+				<label>Gender</label>
+				<select name="gender">
+					<option value="male">Male</option>
+					<option value="female">Female</option>
+					<option value="other">Other</option>
+				</select>
+			</div>
+			<br>
+			<div class  = "age">
+				<label>Age:</label>
+				<input type="number" name="age" value="">
+			</div>
+			<br>
+			<div class = "birthday">
+				<label>Birthday:</label>
+				<input type="date" name="birthday">
+			</div>
+			<br>
+			<input type="submit" name="submit" value="Submit">
+		</form>
+		
+
+</body>
+</html>

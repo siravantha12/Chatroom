@@ -1,0 +1,86 @@
+body{
+	margin-left: 150px;
+	padding: 0;
+	margin-top: 100px;
+	margin-bottom: 10px;
+	background-color: none;
+	font-family: sans-serif;
+	font: 16px, white;
+}
+
+.error{
+	color:red;
+	font-size:40px;
+}
+
+.button{
+	margin-left:200px;
+}
+
+.click{
+	margin-left: 200px;
+}
+
+.Success{
+	color:blue;
+}
+
+.username{
+
+	font-size: 20px;
+	border:auto;
+	border-right: 20px red;
+	border-left: 5px red;
+	background-color:
+	margin:auto;
+	margin-left: 70px;
+	cursor: pointer;
+
+}
+
+.name{
+	margin-top:20px;
+	margin-left: 70px;
+	border:auto;
+	border-right: 20px red;
+	border-left: 5px red;
+	background-color:
+
+}
+
+.email{
+	margin-top:20px;
+	margin-left: 70px;
+	border:auto;
+	border-right: 20px red;
+	border-left: 5px red;
+	background-color:
+
+}
+
+.gender{
+	
+	margin-left: 70px;
+	border:auto;
+	border-right: 20px red;
+	border-left: 5px red;
+	background-color:
+}
+
+.age{
+	
+	margin-left: 70px;
+	border:auto;
+	border-right: 20px red;
+	border-left: 5px red;
+	background-color:
+}
+
+.birthday{
+	
+	margin-left: 70px;
+	border:auto;
+	border-right: 20px red;
+	border-left: 5px red;
+	background-color:
+}
