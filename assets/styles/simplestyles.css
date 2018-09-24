@@ -1,1 +1,64 @@
 
+body{
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+	background: url(../styles/login_wallpaper0.jpg) no-repeat center;
+	background-attachment: fixed;
+	background-size: cover;
+
+}
+
+.login-box{
+	width: 500px;
+	height: 400px;
+	margin: 0px auto;
+	margin-top: 300px;
+	text-align: center;
+	background-color: rgba(95, 98,160,0.30);
+}
+
+.login-box h1{
+	font-size: 40px;
+	margin-bottom: 15px;
+	padding: 5px 0;
+	color: rgb(158,238,250);
+}
+
+.textbox input{
+	overflow: hidden;
+	background: none;
+	color: black;
+	font-size: 20px;
+	width: 300px;
+	height: 70px;
+	border-bottom: 4px solid rgb(158,238,250);
+	border-left: none;
+	border-right: none;
+	border-top: none;
+	
+	margin: 10 10px;
+}
+
+.btn{
+	width: 300px;
+	height: 40px;
+	margin-top: 20px;
+	font-size: 20px;
+	color: rgb(95, 98, 160);
+	border: none;
+	background-color: rgb(158,238,250);
+	cursor: pointer;
+}
+
+.signup{
+	background: none;
+	margin-top: 5px;
+	border: none;
+	color: black;
+	width: 200px;
+	font-size: 13px;
+	cursor: pointer;
+}
+
+
