@@ -12,6 +12,21 @@ function createConnection() {
 	return con;
 }
 
+exports.mysqlAccountCreation = function(firstName, lastName, callback){
+	var con = createConnection();
+	con.query("select * from chatusers where firstName = '" + firstName + "' and lastName = '" + lastName + "'", function (err, result, fields){
+		if(err) throw err;
+		console.log("Checking user account for uniqueness");
+		if(result.length != 0){
+			callback(false);
+		}
+	});
+	con.query("insert into chatusers values ('" + firstName + "','" + lastName + "')", function (err, result, fields){
+		if(err) throw err;
+		callback(true);
+	});
+}
+
 exports.mysqlValidateUser = function(firstName, lastName, callback){
 	var con = createConnection();
 	con.query("select * from chatusers where firstName = '" + firstName  + "' and lastName = '" + lastName + "'" , function (err, result, fields){
@@ -19,10 +34,10 @@ exports.mysqlValidateUser = function(firstName, lastName, callback){
 		console.log(result);
 		if(result.length == 1){
 			console.log("Valid user");
-			return callback(1);
+			callback(1);
 		} else {
 			console.log("Invalid user");
-			return callback(0);
+			callback(0);
 		}
 	});
 }
