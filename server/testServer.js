@@ -6,11 +6,13 @@ var path = require("path");
 var bodyParser = require('body-parser');
 var mysqlConnection = require("./demo_connection.js");
 
+app.use(express.static(__dirname + "/../assets"));
+
 /*
  * Publish main page for user input
  */
 app.get('/',function(req,res){
-	res.sendFile(path.join(__dirname+'/userForm.html'));
+	res.sendFile(path.join(__dirname+'/../assets/view/index.html'));
 });
 
 /*
