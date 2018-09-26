@@ -9,17 +9,18 @@
 	<body>
 		<div class="login-box">
 			<h1>Welcome to Place_Holder!</h1>
-			<div class="textbox">
-				<input type="text" placeholder="Username" name="" value="">
-			</div>
 
-			<div class="textbox">
-				<input type="password" placeholder="Password" name="" value="">
-			</div>
-
-		<div class ="loginbtn">
-			<input class="btn" type="button" name="" value="Log In">
-		</div>
+			<form action = "http://localhost:3456" method = "POST">
+				<div class = "textbox">
+					<input type = "text" name = "username" placeholder = "Username"/>
+				</div>
+				<div class = "textbox">
+					<input type = "text" name = "password" placeholder = "Password"/>
+				</div>
+				<div class = "loginbtn">
+					<input class = "btn" type = "submit" value = "Log In">
+				</div>
+			</form>
 
 		<input class="signup" type="button" name="" value="Don't have a log in? Sign up!">
 
