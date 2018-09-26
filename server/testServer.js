@@ -49,10 +49,11 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.post('/',function(req,res){
 	console.log("Inside post");
 	var parsedInfo = {};
-	parsedInfo.firstName = req.body.userFirstName;
-	parsedInfo.lastName = req.body.userLastName;
+	parsedInfo.firstName = req.body.username;
+	parsedInfo.lastName = req.body.password;
 
 	console.log("validating user");
+	console.log("User info " + parsedInfo.firstName + " " + parsedInfo.lastName);
 	mysqlConnection.mysqlValidateUser(parsedInfo.firstName, parsedInfo.lastName, function(result){
 		if(result){
 			return res.redirect('/chatPage');
