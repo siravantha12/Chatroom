@@ -37,10 +37,30 @@ io.on('connection', function(socket){
 		console.log("message recieved: " + msg);
 		io.emit('newmsg', msg);
 		// io.socket.in("room1").emit('newmsg', msg);
-	});
-});
+	})
+})
 
 app.use(bodyParser.urlencoded({extended:true}));
+
+app.post('/action_page.php',function(req, res){
+	console.log("got a thing baby cakes");
+	var parsedInfo = {};
+	parsedInfo.email = req.body.email;
+	mysqlConnection.isExistingUser(parsedInfo.email, function(err, result){
+		if(err) throw err;
+		if(result){
+			console.log("The user already exists");
+		} else {
+			parsedInfo.psw = req.body.psw;
+			parsedInfo.username = req.body.username;
+			mysqlConnection.mysqlCreateAccount(parsedInfo.username, parsedInfo.email, parsedInfo.psw, function(err){
+				if(err) throw err;
+				console.log("Account created successfully");
+				res.redirect('back');
+			});
+		}
+	});
+});
 
 /*
  * Post response on userForm html. Will redirect client to chatpage if the user is validated.
@@ -54,6 +74,7 @@ app.post('/',function(req,res){
 
 	console.log("validating user");
 	console.log("User info " + parsedInfo.firstName + " " + parsedInfo.lastName);
+	mysqlConnection.isExistingUser(parsedInfo.firstName, parsedInfo.lastName, "test");
 	mysqlConnection.mysqlValidateUser(parsedInfo.firstName, parsedInfo.lastName, function(result){
 		if(result){
 			return res.redirect('/chatPage');
@@ -61,11 +82,10 @@ app.post('/',function(req,res){
 			res.end("You are invalid");
 		}
 	});
-
 });
 
 /*
- * Listen on local network on port 3456 for incomming connections.
+ * Listen on local network on port 3456 for incoming connections.
  */
 http.listen(3456, '0.0.0.0', function(){
 	console.log("listening on port: 3456");
