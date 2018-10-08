@@ -4,7 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require("path");
 var bodyParser = require('body-parser');
-var mysqlConnection = require("./demo_connection.js");
+var mysqlConnection = require("./mysql.js");
 
 app.use(express.static(__dirname + "/../assets"));
 
