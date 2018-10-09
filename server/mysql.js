@@ -24,9 +24,15 @@ function createConnection() {
 	return con;
 }
 
-exports.mysqlAccountCreation = function(firstName, lastName, callback){
+function validatePassword(password, hash, salt) {
+	var passHash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+	return hash == passHash; 
+}
+
+exports.mysqlAccountCreation = function(userName, password, callback){
 	var con = createConnection();
-	con.query("select * from chatusers where firstName = '" + firstName + "' and lastName = '" + lastName + "'", function (err, result, fields){
+
+	con.query("select * from chataccounts where userName = '" + firstName + "' and lastName = '" + lastName + "'", function (err, result, fields){
 		if(err) throw err;
 		console.log("Checking user account for uniqueness");
 		if(result.length != 0){
@@ -39,38 +45,40 @@ exports.mysqlAccountCreation = function(firstName, lastName, callback){
 	});
 }
 
-exports.mysqlValidateUser = function(firstName, lastName, callback){
-	var con = createConnection();
-	con.query("select * from chatusers where firstName = '" + firstName  + "' and lastName = '" + lastName + "'" , function (err, result, fields){
+function mysqlValidateUser(userName, password, callback){
+	var hash;
+	baseConnection.query("select * from chataccounts where userName = '" + userName + "'", function(err, result, fields){
 		if(err) throw err;
 		console.log(result);
-		if(result.length == 1){
-			console.log("Valid user");
-			callback(1);
-		} else {
-			console.log("Invalid user");
-			callback(0);
+
+		for(var i = 0; i < result.length; i++){
+			console.log("Checking against values " + result[i].accountPassword + " " + result[i].salt);
+			if(validatePassword(password, result[i].accountPassword, result[i].salt)){
+				console.log("valid user");
+				return callback(true);
+			}
 		}
+		console.log("invalid user");
+		callback(false);
 	});
 }
 
-exports.isExistingUser = function(accountEmail, callback){
-	baseConnection.query("select * from chataccounts where accountEmail = '" + accountEmail + "'", function(err, result, fields){
-		if(err) callback(err);
-		if(result.length == 0){
-			callback(false);
-		} else {
-			callback(true);
-		}
-	});
-}
+exports.mysqlValidateUser = mysqlValidateUser;
 
 exports.mysqlCreateAccount = function(userName, accountEmail, password, callback){
 	var salt = crypto.randomBytes(16).toString('hex');
 	var hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-	baseConnection.query("Insert into chataccounts (userName, accountPassword, salt, accountEmail) values ('" + userName + "','" + hash + "','" + salt + "','" + accountEmail + "');", function(err, result, fields){
-		if(err) throw err;
-		console.log("Account created");
-		callback();
+	mysqlValidateUser(userName, password, function(result){
+		if(result){
+			callback(false);
+		} else {
+			console.log("account does not exist, creating account");
+			baseConnection.query("Insert into chataccounts (userName, accountPassword, salt, accountEmail) values ('" + userName + "','" + hash + "','" + salt + "','" + accountEmail + "');", function(err, result, fields){
+				if(err) throw err;
+				console.log("Account created");
+				callback(true);
+			});
+
+		}
 	});
 }
