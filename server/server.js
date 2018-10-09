@@ -10,7 +10,7 @@ server.set('view engine','html');
 server.use(bodyParser.urlencoded({ extended:true}));
 
 server.get('/',function(req,res){
-  res.sendFile(path.join(__dirname+'/../assets/view/simpleChat.html'));
+  res.render('simpleChat.html');
 });
 
 server.post('/',function(req,res){

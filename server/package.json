@@ -23,6 +23,7 @@
     "request": "*",
     "express": "*",
     "serve-static": "*",
-    "cookie-parser": "*"
+    "cookie-parser": "*",
+    "socket.io": "*"
   }
 }
