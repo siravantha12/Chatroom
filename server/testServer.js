@@ -27,15 +27,23 @@ app.get('/chatPage', function(req,res){
  * "chat rooms" (socket groups). Commented out for ease of testing.
  */
 io.on('connection', function(socket){
-
-	// socket.join("room1");
+	/*
+	 * Connect to a chatroom by name
+	 */
+	socket.on('join', function(room){
+		socket.leave(socket.room);
+		socket.room = room;
+		socket.join(room, function(){
+			console.log(socket.rooms);	
+		});
+	});
 
 	/*
 	 * Emit new messages when the msg even is recieved
 	 */
 	socket.on('msg', function(msg){
-		console.log("message recieved: " + msg);
-		io.emit('newmsg', msg);
+		console.log("message recieved: " + msg + "submitting to room " + socket.room);
+		io.to(socket.room).emit('newmsg', msg);
 		// io.socket.in("room1").emit('newmsg', msg);
 	})
 })
@@ -43,21 +51,16 @@ io.on('connection', function(socket){
 app.use(bodyParser.urlencoded({extended:true}));
 
 app.post('/action_page.php',function(req, res){
-	console.log("got a thing baby cakes");
 	var parsedInfo = {};
 	parsedInfo.email = req.body.email;
-	mysqlConnection.isExistingUser(parsedInfo.email, function(err, result){
-		if(err) throw err;
+	parsedInfo.psw = req.body.psw;
+	parsedInfo.username = req.body.username;
+	mysqlConnection.mysqlCreateAccount(parsedInfo.username, parsedInfo.email, parsedInfo.psw, function(result){
 		if(result){
-			console.log("The user already exists");
+			console.log("Account created successfully");
+			res.redirect('back');
 		} else {
-			parsedInfo.psw = req.body.psw;
-			parsedInfo.username = req.body.username;
-			mysqlConnection.mysqlCreateAccount(parsedInfo.username, parsedInfo.email, parsedInfo.psw, function(err){
-				if(err) throw err;
-				console.log("Account created successfully");
-				res.redirect('back');
-			});
+			res.end("Account could not be created, this message will become more helpful with time");	
 		}
 	});
 });
@@ -69,13 +72,10 @@ app.post('/action_page.php',function(req, res){
 app.post('/',function(req,res){
 	console.log("Inside post");
 	var parsedInfo = {};
-	parsedInfo.firstName = req.body.username;
-	parsedInfo.lastName = req.body.password;
-
+	parsedInfo.userName = req.body.username;
+	parsedInfo.password = req.body.password;
 	console.log("validating user");
-	console.log("User info " + parsedInfo.firstName + " " + parsedInfo.lastName);
-	mysqlConnection.isExistingUser(parsedInfo.firstName, parsedInfo.lastName, "test");
-	mysqlConnection.mysqlValidateUser(parsedInfo.firstName, parsedInfo.lastName, function(result){
+	mysqlConnection.mysqlValidateUser(parsedInfo.userName, parsedInfo.password, function(result){
 		if(result){
 			return res.redirect('/chatPage');
 		} else {
