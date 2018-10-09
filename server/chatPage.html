@@ -6,6 +6,10 @@
     <body>
 
         <p id="demo"></p>
+	<input id = "room" type = "text" value = "" placeholder = "Chat Room Name">
+	<button type = "button" name = "roombutton" onclick = "joinRoom()">
+		Connect to Room
+	</button>
         <input id = "message" type = "text" value = "" placeholder = "Type to chat">
         <button type = "button" name = "button" onclick = "sendMessage()">
 	    Send Message
@@ -25,6 +29,12 @@
 	        socket.emit('msg', { message: msg });
             }
         }
+	function joinRoom() {
+		var room = document.getElementById('room').value;
+		if(room){
+			socket.emit('join', room);
+		}
+	}
 	<!-- recieves text from the server and writes it to the page -->
         socket.on('newmsg', function(data) {
             document.getElementById("demo").innerHTML = "new message recieved";
