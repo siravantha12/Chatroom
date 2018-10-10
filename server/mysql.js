@@ -1,5 +1,5 @@
 var mysql = require('mysql');
-var crypto = require('crypto');
+var crypto = require('crypto'); // Used for password encryption
 
 var baseConnection = createConnection();
 
@@ -24,27 +24,17 @@ function createConnection() {
 	return con;
 }
 
+/*
+ * Method to validate a password
+ */
 function validatePassword(password, hash, salt) {
 	var passHash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 	return hash == passHash; 
 }
 
-exports.mysqlAccountCreation = function(userName, password, callback){
-	var con = createConnection();
-
-	con.query("select * from chataccounts where userName = '" + firstName + "' and lastName = '" + lastName + "'", function (err, result, fields){
-		if(err) throw err;
-		console.log("Checking user account for uniqueness");
-		if(result.length != 0){
-			callback(false);
-		}
-	});
-	con.query("insert into chatusers values ('" + firstName + "','" + lastName + "')", function (err, result, fields){
-		if(err) throw err;
-		callback(true);
-	});
-}
-
+/*
+ * Function to validate a user given a username and password
+ */
 function mysqlValidateUser(userName, password, callback){
 	var hash;
 	baseConnection.query("select * from chataccounts where userName = '" + userName + "'", function(err, result, fields){
@@ -63,8 +53,33 @@ function mysqlValidateUser(userName, password, callback){
 	});
 }
 
+/*
+ * Function to create a chatroom given a chatname, privateLock (is the chatroom private), and a password if the chat is private
+ */
+exports.mysqlCreateChat = function(chatName, privateLock, password){
+	var isPrivate;
+	if(privateLock){
+		isPrivate = 1;
+		var salt = crypto.randomBytes(16).toString('hex');
+		var hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+		baseConnection.query("insert into chatrooms (chatName, private, chatPassword, salt) values ('" + chatName + "'," + isPrivate + ",'" + hash + "','" + salt + "');", function(err, result, fields){
+			if(err) throw err;
+			console.log("Chat created");
+		}
+	} else {
+		isPrivate = 0;
+		baseConnection.query("insert into chatrooms (chatName, private, chatPassword, hash, salt) values ('" + chatName + "'," + isPrivate + ", NULL, NULL, NULL);", function(err, result, fields){
+			if(err) throw err;
+			console.log("Chat created. no password");
+		}
+	}
+}
+
 exports.mysqlValidateUser = mysqlValidateUser;
 
+/*
+ * Function to create an account in the database given a username, email, and password
+ */
 exports.mysqlCreateAccount = function(userName, accountEmail, password, callback){
 	var salt = crypto.randomBytes(16).toString('hex');
 	var hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
