@@ -5,6 +5,12 @@ var io = require('socket.io')(http);
 var path = require("path");
 var bodyParser = require('body-parser');
 var mysqlConnection = require("./mysql.js");
+var ejs = require("ejs");
+
+
+/*
+ * Simple Setup for View/Render Engine
+ */
 
 app.set('views',path.join(__dirname+'/../assets/view'))
 app.engine('html',ejs.renderFile);
@@ -23,8 +29,22 @@ app.get('/',function(req,res){
  * Publish chatPage.html 
  */
 app.get('/chatPage', function(req,res){
-    console.log("test");
-    res.render('/../../server/chatPage.html');
+    res.render('../../server/chatPage.html');
+});
+/*
+ * Error Page when Error Occur
+ * Mostly when database isn't accesible or server is down.
+ */
+app.get('/errorPage',function(req,res){
+	console.log("Went to Error Page for some Reason");
+	res.render(); //include errorpage when ErrorPage.html is created
+});
+
+/*
+ * Simple HTML page about the project and developers 
+ */
+app.get('/aboutUs',function(req,res){
+	res.render(); //include aboutus page when aboutUs.html is created
 });
 
 /*
@@ -81,13 +101,13 @@ app.post('/',function(req,res){
 	parsedInfo.password = req.body.password;
     console.log("validating user");
     res.redirect('/chatPage');
-	// mysqlConnection.mysqlValidateUser(parsedInfo.userName, parsedInfo.password, function(result){
-	// 	if(result){
-	// 		return res.redirect('/chatPage');
-	// 	} else {
-	// 		res.end("You are invalid");
-	// 	}
-	// });
+	mysqlConnection.mysqlValidateUser(parsedInfo.userName, parsedInfo.password, function(result){
+		if(result){
+			return res.redirect('/chatPage');
+		} else {
+			res.end("You are invalid");
+		}
+	});
 });
 
 /*
