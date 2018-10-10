@@ -1,0 +1,40 @@
+
+body{
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+	background-color: rgb(88,93,95);
+}
+
+form { 
+	background-color: rgb(77,77,77) 
+	padding: 3px; 
+	position: fixed; 
+	bottom: 0; 
+	width: 100%; 
+}
+
+form input { 
+	color: rgb(200,200,200);
+	border: 0; 
+	padding: 12px; 
+	width: 50%; 
+	/*margin-right: 5px; */
+	margin-left: 270px;
+	margin-bottom: 25px;
+	font-size: 14px;
+}
+
+input[id="m"], textarea{
+	background-color: rgb(115,115,115);
+	border: none;
+}
+
+form button { 
+	width: 7%; 
+	background: rgb(129, 104,161);
+	border: none; 
+	padding: 12px; 
+	color: rgb(158,238,250);
+	font-size: 14px;
+}
