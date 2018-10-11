@@ -42,4 +42,13 @@ app.post('/',function(req,res){
 	});
 });
 
+/*
+ * Simple Function to render "htmlName" with a tuple/array UserInfo
+ * UserInfo = [UserName,etc.,etc.,etc.] etc = Maybe Other info if we needed
+ */
+
+function renderUserInfo(res,htmlName,UserInfo){
+    res.render(htmlName);
+}
+
 app.listen(3456,'0.0.0.0');
