@@ -22,6 +22,7 @@ app.get('/chatPage', function(req,res){
 	res.sendFile(path.join(__dirname+'/chatPage.html'));
 });
 
+
 /*
  * Control client connections. Commented out code allows sockets to be grouped into individual
  * "chat rooms" (socket groups). Commented out for ease of testing.
@@ -69,7 +70,7 @@ app.post('/action_page.php',function(req, res){
  * Post response on userForm html. Will redirect client to chatpage if the user is validated.
  * Will tell the user they are invalid otherwise.
  */
-app.post('/',function(req,res){
+app.post('/login',function(req,res){
 	console.log("Inside post");
 	var parsedInfo = {};
 	parsedInfo.userName = req.body.username;
@@ -77,7 +78,7 @@ app.post('/',function(req,res){
 	console.log("validating user");
 	mysqlConnection.mysqlValidateUser(parsedInfo.userName, parsedInfo.password, function(result){
 		if(result){
-			return res.redirect('/chatPage');
+			res.redirect('/chatPage');
 		} else {
 			res.end("You are invalid");
 		}

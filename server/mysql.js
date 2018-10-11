@@ -65,13 +65,13 @@ exports.mysqlCreateChat = function(chatName, privateLock, password){
 		baseConnection.query("insert into chatrooms (chatName, private, chatPassword, salt) values ('" + chatName + "'," + isPrivate + ",'" + hash + "','" + salt + "');", function(err, result, fields){
 			if(err) throw err;
 			console.log("Chat created");
-		}
+		});
 	} else {
 		isPrivate = 0;
 		baseConnection.query("insert into chatrooms (chatName, private, chatPassword, hash, salt) values ('" + chatName + "'," + isPrivate + ", NULL, NULL, NULL);", function(err, result, fields){
 			if(err) throw err;
 			console.log("Chat created. no password");
-		}
+		});
 	}
 }
 
