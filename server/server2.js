@@ -84,10 +84,13 @@ app.post('/',function(req,res){
 	mysqlConnection.mysqlValidateUser(parsedInfo.userName, parsedInfo.password, function(result){
 		if(result){
 			res.cookie('name', parsedInfo.userName).send('cookie set'); //Sets name = express cookie
+			res.cookie('password',parsedInfo.password).send('cookie set'); //Sets Password = cookie
 			res.cookie(name, 'value', {expire: 3000 + Date.now()}); //Set expiration date (will most likley put a week before testing)
+			res.cookie(password,'value',{expire: 3000 + Date.now()});
 			//For Now we will clear cookie so it doesn't save during testing
 			//Will Change once we demonstrate
-			res.clearCookie(name); //Clear cookie with name 'name'			
+			res.clearCookie(name); //Clear cookie with name 'name'	
+			res.clearCookie(password);		
 			return res.redirect('/chatPage');
 		} else {
 			res.end("You are invalid");
@@ -101,3 +104,6 @@ app.post('/',function(req,res){
 http.listen(3456, '0.0.0.0', function(){
 	console.log("listening on port: 3456");
 });
+
+function createCookie(CookieName,value){
+}
