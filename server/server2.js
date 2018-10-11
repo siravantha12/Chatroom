@@ -6,7 +6,9 @@ var path = require("path");
 var bodyParser = require('body-parser');
 var mysqlConnection = require("./mysql.js");
 var ejs = require("ejs");
+var cookieParser = require('cookie-parser');
 
+app.use(cookieParser());
 
 /*
  * Simple Setup for View/Render Engine
@@ -47,33 +49,11 @@ app.get('/aboutUs',function(req,res){
 	res.render(); //include aboutus page when aboutUs.html is created
 });
 
-/*
- * Control client connections. Commented out code allows sockets to be grouped into individual
- * "chat rooms" (socket groups). Commented out for ease of testing.
- */
-io.on('connection', function(socket){
-	/*
-	 * Connect to a chatroom by name
-	 */
-	socket.on('join', function(room){
-		socket.leave(socket.room);
-		socket.room = room;
-		socket.join(room, function(){
-			console.log(socket.rooms);	
-		});
-	});
-
-	/*
-	 * Emit new messages when the msg even is recieved
-	 */
-	socket.on('msg', function(msg){
-		console.log("message recieved: " + msg + "submitting to room " + socket.room);
-		io.to(socket.room).emit('newmsg', msg);
-		// io.socket.in("room1").emit('newmsg', msg);
-	})
-})
-
 app.use(bodyParser.urlencoded({extended:true}));
+
+/*
+ * Simple Post that index.html get after signing up for new account
+ */
 
 app.post('/action_page.php',function(req, res){
 	var parsedInfo = {};
@@ -103,6 +83,11 @@ app.post('/',function(req,res){
     res.redirect('/chatPage');
 	mysqlConnection.mysqlValidateUser(parsedInfo.userName, parsedInfo.password, function(result){
 		if(result){
+			res.cookie('name', parsedInfo.userName).send('cookie set'); //Sets name = express cookie
+			res.cookie(name, 'value', {expire: 3000 + Date.now()}); //Set expiration date (will most likley put a week before testing)
+			//For Now we will clear cookie so it doesn't save during testing
+			//Will Change once we demonstrate
+			res.clearCookie(name); //Clear cookie with name 'name'			
 			return res.redirect('/chatPage');
 		} else {
 			res.end("You are invalid");
