@@ -105,5 +105,12 @@ http.listen(3456, '0.0.0.0', function(){
 	console.log("listening on port: 3456");
 });
 
-function createCookie(CookieName,value){
+/*
+ * Basic Function to set Cookie
+ */
+
+function createCookie(res,CookieName,value){
+	res.cookie(CookieName,CookieName).send('cookie set');
+	res.cookie(CookieName,'value',{expire: 3000 + Data.now()});
+	res.clearCookie(CookieName); //Clear For Now
 }
