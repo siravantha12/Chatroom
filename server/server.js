@@ -1,9 +1,20 @@
 var express = require('express');
 var server = express();
 var path = require("path");
+var ejs = require("ejs");
+var bodyParser = require('body-parser');
+
+server.set('views',path.join(__dirname+'/../assets/view'))
+server.engine('html',ejs.renderFile);
+server.set('view engine','html');
+server.use(bodyParser.urlencoded({ extended:true}));
 
 server.get('/',function(req,res){
-  res.sendFile(path.join(__dirname+'/userForm.html'));
+  res.render('simpleChat.html');
 });
 
-server.listen(1337,'0.0.0.0');
+server.post('/',function(req,res){
+  res.write()
+});
+
+server.listen(3456);
