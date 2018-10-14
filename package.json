@@ -2,7 +2,7 @@
   "name": "chatroom",
   "version": "1.0.0",
   "description": "packages for chatroom",
-  "main": "demo_connection.js",
+  "main": "server/testServer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,13 +17,17 @@
   },
   "homepage": "https://github.com/utk-cs/team-dijkstra#readme",
   "dependencies": {
-    "mysql": "^2.16.0",
-    "connect": "*",
     "body-parser": "*",
-    "request": "*",
-    "express": "*",
-    "serve-static": "*",
+    "connect": "*",
     "cookie-parser": "*",
+    "express": "*",
+    "express-session": "*",
+    "connect-flash": "*",
+    "mysql": "^2.16.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "request": "*",
+    "serve-static": "*",
     "socket.io": "*"
   }
 }
