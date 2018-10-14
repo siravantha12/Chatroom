@@ -5,6 +5,15 @@ var io = require('socket.io')(http);
 var path = require("path");
 var bodyParser = require('body-parser');
 var mysqlConnection = require("./mysql.js");
+var session = require('express-session');
+var passport = require('passport');
+var flash = require('connect-flash');
+require('../config/passport')(passport);
+
+app.use(session({ secret: 'themoonlandingwasfake' }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 
 app.use(express.static(__dirname + "/../assets"));
 
@@ -18,7 +27,7 @@ app.get('/',function(req,res){
 /*
  * Publish chatPage.html 
  */
-app.get('/chatPage', function(req,res){
+app.get('/chatPage', isLoggedIn, function(req,res){
 	res.sendFile(path.join(__dirname+'/chatPage.html'));
 });
 
@@ -62,7 +71,7 @@ app.post('/action_page.php',function(req, res){
 			res.redirect('back');
 		} else {
 			res.end("Account could not be created, this message will become more helpful with time");	
-		}
+get		}
 	});
 });
 
@@ -70,6 +79,13 @@ app.post('/action_page.php',function(req, res){
  * Post response on userForm html. Will redirect client to chatpage if the user is validated.
  * Will tell the user they are invalid otherwise.
  */
+app.post('/login', passport.authenticate('local-login', {
+	successRedirect : '/chatPage',
+	failureRedirect : '/',
+	failureFlash : true
+}));
+
+/*
 app.post('/login',function(req,res){
 	console.log("Inside post");
 	var parsedInfo = {};
@@ -84,10 +100,19 @@ app.post('/login',function(req,res){
 		}
 	});
 });
-
+*/
 /*
  * Listen on local network on port 3456 for incoming connections.
  */
+
+function isLoggedIn(req, res, next){
+	if(req.isAuthenticated()){
+		return next();
+	} else {
+		res.redirect('/');
+	}
+}
+
 http.listen(3456, '0.0.0.0', function(){
 	console.log("listening on port: 3456");
 });

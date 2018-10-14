@@ -24,6 +24,13 @@ function createConnection() {
 	return con;
 }
 
+
+exports.getRowById = function(accountNumber, callback){
+	baseConnection.query("select * from chataccounts where accountNumber = " + accountNumber + ";", function(err, result, fields){
+		callback(err, result);
+	});
+}
+
 /*
  * Method to validate a password
  */
@@ -40,12 +47,13 @@ function mysqlValidateUser(userName, password, callback){
 	baseConnection.query("select * from chataccounts where userName = '" + userName + "'", function(err, result, fields){
 		if(err) throw err;
 		console.log(result);
-
+		var passHash;
 		for(var i = 0; i < result.length; i++){
 			console.log("Checking against values " + result[i].accountPassword + " " + result[i].salt);
-			if(validatePassword(password, result[i].accountPassword, result[i].salt)){
+			passHash = crypto.pbkdf2Sync(password, result[i].salt, 1000, 64, 'sha512').toString('hex');
+			if(result[i].accountPassword == passHash){
 				console.log("valid user");
-				return callback(true);
+				return callback(true, result[i].accountNumber);
 			}
 		}
 		console.log("invalid user");
