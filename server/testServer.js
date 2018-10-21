@@ -41,13 +41,14 @@ io.on('connection', function(socket){
 	 * Connect to a chatroom by name
 	 */
 	socket.on('join', function(room){
-		socket.leave(socket.room);
-		socket.room = room;
-		socket.join(room, function(){
-			console.log(socket.rooms);	
-		});
 		mysqlConnection.mysqlCreateChat(room, function(result) {
-			console.log("INSIDE THAT TIME");
+			socket.leave(socket.room);
+			room = room + result.insertId;
+			console.log(room);
+			socket.room = (room);
+			socket.join(room, function(){
+				console.log(socket.rooms);
+			});
 		});
 	});
 
@@ -88,22 +89,6 @@ app.post('/login', passport.authenticate('local-login', {
 	failureFlash : true
 }));
 
-/*
-app.post('/login',function(req,res){
-	console.log("Inside post");
-	var parsedInfo = {};
-	parsedInfo.userName = req.body.username;
-	parsedInfo.password = req.body.password;
-	console.log("validating user");
-	mysqlConnection.mysqlValidateUser(parsedInfo.userName, parsedInfo.password, function(result){
-		if(result){
-			res.redirect('/chatPage');
-		} else {
-			res.end("You are invalid");
-		}
-	});
-});
-*/
 /*
  * Listen on local network on port 3456 for incoming connections.
  */
