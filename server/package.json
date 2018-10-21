@@ -17,13 +17,14 @@
   },
   "homepage": "https://github.com/utk-cs/team-dijkstra#readme",
   "dependencies": {
-    "mysql": "^2.16.0",
-    "connect": "*",
     "body-parser": "*",
-    "request": "*",
+    "connect": "*",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.6.1",
     "express": "*",
+    "mysql": "^2.16.0",
+    "request": "*",
     "serve-static": "*",
-    "cookie-parser": "*",
     "socket.io": "*"
   }
 }
