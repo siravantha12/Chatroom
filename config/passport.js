@@ -9,7 +9,9 @@ module.exports = function(passport){
 	});
 
 	passport.deserializeUser(function(id, done){
-		//deserialize logic
+		mysqlConnection.getRowById(id, function(err, result){
+			done(err, result[0]);
+		});
 	});
 
 	passport.use('local-login', new LocalStrategy({
@@ -18,12 +20,11 @@ module.exports = function(passport){
 		passReqToCallback : true
 	},
 	function(req, username, password, done){
-		mysqlConnection.mysqlValidateUser(username, password, function(result, hash){
+		mysqlConnection.mysqlValidateUser(username, password, function(result, id){
 			if(result){
 				// User is validated
 				var user = new Object();
-				user.username = username;
-				user.hash = hash;
+				user.id = id;
 				return done(null, user);
 			} else {
 				// User is not validated
