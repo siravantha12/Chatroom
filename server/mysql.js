@@ -61,10 +61,10 @@ function mysqlValidateUser(userName, password, callback){
  * Function to create a chatroom given a chatname, privateLock (is the chatroom private), and a password if the chat is private
  */
 exports.mysqlCreateChat = function(chatName, callback){
-	baseConnection.query("insert into chatrooms (chatName) values ('" + chatName + "');", function(err, result, fields){
+	baseConnection.query("insert into chatrooms (roomName) values ('" + chatName + "');", function(err, result, fields){
 		if(err) throw err;
 		console.log(result);
-		console.log("Chat created");
+		callback(result);
 	});
 }
 
