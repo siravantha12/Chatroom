@@ -6,8 +6,6 @@ var baseConnection = createConnection();
 function getSalt(userName, accountEmail, callback) {
 	baseConnection.query("select * from chataccounts where userName = '" + userName + "' and accountEmail = '" + accountEmail + "'", function (err, result, fields){
 		if(err) throw err;
-		console.log("Getting the salt");
-		console.log(result);
 		callback(result[0].salt);
 	});
 }
@@ -23,7 +21,6 @@ function createConnection() {
 	});
 	return con;
 }
-
 
 exports.getRowById = function(accountNumber, callback){
 	baseConnection.query("select * from chataccounts where accountNumber = " + accountNumber + ";", function(err, result, fields){
@@ -46,7 +43,6 @@ function mysqlValidateUser(userName, password, callback){
 	var hash;
 	baseConnection.query("select * from chataccounts where userName = '" + userName + "'", function(err, result, fields){
 		if(err) throw err;
-		console.log(result);
 		var passHash;
 		for(var i = 0; i < result.length; i++){
 			console.log("Checking against values " + result[i].accountPassword + " " + result[i].salt);
@@ -64,23 +60,12 @@ function mysqlValidateUser(userName, password, callback){
 /*
  * Function to create a chatroom given a chatname, privateLock (is the chatroom private), and a password if the chat is private
  */
-exports.mysqlCreateChat = function(chatName, privateLock, password){
-	var isPrivate;
-	if(privateLock){
-		isPrivate = 1;
-		var salt = crypto.randomBytes(16).toString('hex');
-		var hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-		baseConnection.query("insert into chatrooms (chatName, private, chatPassword, salt) values ('" + chatName + "'," + isPrivate + ",'" + hash + "','" + salt + "');", function(err, result, fields){
-			if(err) throw err;
-			console.log("Chat created");
-		});
-	} else {
-		isPrivate = 0;
-		baseConnection.query("insert into chatrooms (chatName, private, chatPassword, hash, salt) values ('" + chatName + "'," + isPrivate + ", NULL, NULL, NULL);", function(err, result, fields){
-			if(err) throw err;
-			console.log("Chat created. no password");
-		});
-	}
+exports.mysqlCreateChat = function(chatName, callback){
+	baseConnection.query("insert into chatrooms (chatName) values ('" + chatName + "');", function(err, result, fields){
+		if(err) throw err;
+		console.log(result);
+		console.log("Chat created");
+	});
 }
 
 exports.mysqlValidateUser = mysqlValidateUser;
@@ -105,3 +90,4 @@ exports.mysqlCreateAccount = function(userName, accountEmail, password, callback
 		}
 	});
 }
+
