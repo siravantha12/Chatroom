@@ -46,6 +46,9 @@ io.on('connection', function(socket){
 		socket.join(room, function(){
 			console.log(socket.rooms);	
 		});
+		mysqlConnection.mysqlCreateChat(room, function(result) {
+			console.log("INSIDE THAT TIME");
+		});
 	});
 
 	/*
