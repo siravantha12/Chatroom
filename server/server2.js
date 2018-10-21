@@ -83,14 +83,8 @@ app.post('/',function(req,res){
     res.redirect('/chatPage');
 	mysqlConnection.mysqlValidateUser(parsedInfo.userName, parsedInfo.password, function(result){
 		if(result){
-			res.cookie('name', parsedInfo.userName).send('cookie set'); //Sets name = express cookie
-			res.cookie('password',parsedInfo.password).send('cookie set'); //Sets Password = cookie
-			res.cookie(name, 'value', {expire: 3000 + Date.now()}); //Set expiration date (will most likley put a week before testing)
-			res.cookie(password,'value',{expire: 3000 + Date.now()});
-			//For Now we will clear cookie so it doesn't save during testing
-			//Will Change once we demonstrate
-			res.clearCookie(name); //Clear cookie with name 'name'	
-			res.clearCookie(password);		
+			createCookie(res,'name',1000);
+			createCookie(res,'password',1000);
 			return res.redirect('/chatPage');
 		} else {
 			res.end("You are invalid");
@@ -112,5 +106,9 @@ http.listen(3456, '0.0.0.0', function(){
 function createCookie(res,CookieName,value){
 	res.cookie(CookieName,CookieName).send('cookie set');
 	res.cookie(CookieName,'value',{expire: 3000 + Data.now()});
-	res.clearCookie(CookieName); //Clear For Now
+	deleteCookie(res,CookieName,value);
+}
+
+function deleteCookie(res,CookieName,value){
+	res.clearCookie(CookieName);
 }
