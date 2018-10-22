@@ -8,9 +8,24 @@ var mysqlConnection = require("./mysql.js");
 var session = require('express-session');
 var passport = require('passport');
 var flash = require('connect-flash');
+var cookieParser = require('cookie-parser');
+var MySQLStore = require('express-mysql-session')(session);
+var connect = require('connect');
+var cookie = require('./node_modules/cookie');
+
 require('../config/passport')(passport);
 
-app.use(session({ secret: 'themoonlandingwasfake' }));
+var mysqlOptions = {
+	host: "216.96.149.200",
+	user: "cbates10",
+	password: "Imbroglio3724!",
+	database: "chat"
+};
+
+var sessionStore = new MySQLStore(mysqlOptions);
+
+app.use(cookieParser());
+app.use(session({ secret: 'themoonlandingwasfake', store: sessionStore }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
@@ -36,15 +51,30 @@ app.get('/chatPage', isLoggedIn, function(req,res){
  * Control client connections. Commented out code allows sockets to be grouped into individual
  * "chat rooms" (socket groups). Commented out for ease of testing.
  */
+
 io.on('connection', function(socket){
 	/*
-	 * Connect to a chatroom by name
-	 */
+ 	* Connect to a chatroom by name
+ 	*/
+	var cookie_string = socket.request.headers.cookie;
+	if(cookie_string){
+		console.log("it is not undefined");
+		var parsed_cookies = cookie.parse(cookie_string);
+		var connect_sid = parsed_cookies['connect.sid'];
+		var sessionId = connect_sid.match(/(?<=s:).*?(?=\.)/);
+		console.log("value found from regex is below");
+		console.log(sessionId[0]);
+		sessionStore.get(sessionId, function(error, session){
+			console.log(session);
+			console.log("The above is the session");
+		});
+	}
 	socket.on('join', function(room){
 		mysqlConnection.mysqlCreateChat(room, function(result) {
 			socket.leave(socket.room);
-			room = room + result.insertId;
+			room = room + "#" + result.insertId;
 			console.log(room);
+			console.log(session);
 			socket.room = (room);
 			socket.join(room, function(){
 				console.log(socket.rooms);
@@ -53,12 +83,11 @@ io.on('connection', function(socket){
 	});
 
 	/*
-	 * Emit new messages when the msg even is recieved
-	 */
+ 	* Emit new messages when the msg even is recieved
+ 	*/
 	socket.on('msg', function(msg){
 		console.log("message recieved: " + msg + "submitting to room " + socket.room);
 		io.to(socket.room).emit('newmsg', msg);
-		// io.socket.in("room1").emit('newmsg', msg);
 	})
 })
 
@@ -75,7 +104,7 @@ app.post('/action_page.php',function(req, res){
 			res.redirect('back');
 		} else {
 			res.end("Account could not be created, this message will become more helpful with time");	
-get		}
+		}
 	});
 });
 
