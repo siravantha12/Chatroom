@@ -51,6 +51,22 @@ app.get('/chatPage', function(req,res){
 });
 
 /*
+ * Error Page when Error Occur
+ * Mostly when database isn't accesible or server is down.
+ */
+app.get('/errorPage',function(req,res){
+	console.log("Went to Error Page for some Reason");
+	res.render(); //include errorpage when ErrorPage.html is created
+});
+
+/*
+ * Simple HTML page about the project and developers 
+ */
+app.get('/aboutUs',function(req,res){
+	res.render(); //include aboutus page when aboutUs.html is created
+});
+
+/*
  * Control client connections. Commented out code allows sockets to be grouped into individual
  * "chat rooms" (socket groups). Commented out for ease of testing.
  */
