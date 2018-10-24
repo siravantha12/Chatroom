@@ -68,8 +68,8 @@ exports.mysqlCreateChat = function(chatName, callback){
 	});
 }
 
-exports.mysqlStoreMessage = function(roomid, accountNumber, messagetime, message){
-	baseConnection.query("insert into chatroommessages values (" + roomid + "," + accountNumber + "," + messagetime + ",'" + message + "');");
+exports.mysqlStoreMessage = function(roomid, accountNumber, message){
+	baseConnection.query("insert into chatroommessages (roomid, accountNumber, chatmessage) values (" + roomid + "," + accountNumber + ",'" + message + "');");
 }
 
 exports.mysqlValidateUser = mysqlValidateUser;
