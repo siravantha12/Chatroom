@@ -22,6 +22,12 @@ function createConnection() {
 	return con;
 }
 
+exports.getMessagesForRoom = function(roomid, callback){
+	baseConnection.query("select userName, messagetime, chatmessage from chatroommessages natural join chataccounts where roomid = " + roomid + ";", function (err, result, fields){
+		callback(err, result);
+	});
+}
+
 exports.getRowById = function(accountNumber, callback){
 	baseConnection.query("select * from chataccounts where accountNumber = " + accountNumber + ";", function(err, result, fields){
 		callback(err, result);
@@ -48,11 +54,9 @@ function mysqlValidateUser(userName, password, callback){
 			console.log("Checking against values " + result[i].accountPassword + " " + result[i].salt);
 			passHash = crypto.pbkdf2Sync(password, result[i].salt, 1000, 64, 'sha512').toString('hex');
 			if(result[i].accountPassword == passHash){
-				console.log("valid user");
 				return callback(true, result[i].accountNumber);
 			}
 		}
-		console.log("invalid user");
 		callback(false);
 	});
 }
@@ -84,10 +88,8 @@ exports.mysqlCreateAccount = function(userName, accountEmail, password, callback
 		if(result){
 			callback(false);
 		} else {
-			console.log("account does not exist, creating account");
 			baseConnection.query("Insert into chataccounts (userName, accountPassword, salt, accountEmail) values ('" + userName + "','" + hash + "','" + salt + "','" + accountEmail + "');", function(err, result, fields){
 				if(err) throw err;
-				console.log("Account created");
 				callback(true);
 			});
 
