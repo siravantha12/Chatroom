@@ -120,6 +120,10 @@ app.post('/action_page.php',function(req, res){
 	mysqlConnection.mysqlCreateAccount(parsedInfo.username, parsedInfo.email, parsedInfo.psw, function(result){
 		if(result){
 			console.log("Account created successfully");
+			createCookie(res,parsedInfo.username,0);
+			//Only Username for the moment, will ask front end to include checkbox, "Remember Me".
+			//function:
+			//if(checkboxclick())){creatcookie(res,parsedInfo.psw,0)}; 
 			res.redirect('back');
 		} else {
 			res.end("Account could not be created, this message will become more helpful with time");	
@@ -152,3 +156,14 @@ function isLoggedIn(req, res, next){
 http.listen(3456, '0.0.0.0', function(){
 	console.log("listening on port: 3456");
 });
+
+function createCookie(res,CookieName,value){
+	res.cookie(CookieName,CookieName).send('cookie set');
+	res.cookie(CookieName,'value',{expire: 3000 + Data.now()});
+	res.clearCookie(CookieName); //Clear For Now
+	deleteCookie(res,CookieName,value);
+}
+
+function deleteCookie(res,CookieName,value){
+	res.clearCookie(CookieName);
+} 
