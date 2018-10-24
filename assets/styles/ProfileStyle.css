@@ -1,0 +1,33 @@
+body{
+	background-color: rgb(80, 80, 80);
+}
+
+.names{
+	font: Calibri;
+	color:white;
+	font-size: 18px;
+	margin-top: 200px;
+	margin-left: 50px;
+
+}
+
+.changes{
+
+	margin-top: 50px;
+	margin-left: 50px;
+
+}
+
+.logout{
+	background color: red;
+	font-size: 30px;
+	color:red;
+	padding: 16px;
+	border:none;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.opener{
+	font-size: 70px;
+}
