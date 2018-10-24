@@ -38,8 +38,11 @@
 	<!-- recieves text from the server and writes it to the page -->
         socket.on('newmsg', function(data) {
             document.getElementById("demo").innerHTML = "new message recieved";
-	    document.getElementById('message-container').innerHTML += '<div><b>' + data.message + '</div>'
-        })
+	    document.getElementById('message-container').innerHTML += '<div><b>' + data.message + '</div>';
+        });
+	socket.on('allchatmessages', function(data) {	
+	    document.getElementById('message-container').innerHTML += '<div><b>Message package recieved from chatroom</div>';
+	});
     </script>
     </body>
 </html>
