@@ -56,14 +56,16 @@ app.get('/chatPage', function(req,res){
  */
 app.get('/errorPage',function(req,res){
 	console.log("Went to Error Page for some Reason");
-	res.render(); //include errorpage when ErrorPage.html is created
+	res.render('Error-sign-up.html'); //include errorpage when ErrorPage.html is created
 });
 
 /*
  * Simple HTML page about the project and developers 
  */
 app.get('/aboutUs',function(req,res){
-	res.render(); //include aboutus page when aboutUs.html is created
+	//res.render(); //include aboutus page when aboutUs.html is created
+	//Simple code to express text while aboutUs is being made/
+	res.send('Created by Team-Dijsktra. (UTK 340 Project). Basic Chatroom Webpage.');
 });
 
 /*
@@ -127,6 +129,7 @@ app.post('/action_page.php',function(req, res){
 			res.redirect('back');
 		} else {
 			res.end("Account could not be created, this message will become more helpful with time");	
+			res.redirect('/errorPage'); //Render Error-Page.html when Error-Page html is finished
 		}
 	});
 });
