@@ -56,6 +56,7 @@ io.on('connection', function(socket){
 	/*
  	* Connect to a chatroom by name
  	*/
+	// Determine the user identity of whoever connects to a socket
 	var cookie_string = socket.request.headers.cookie;
 	if(cookie_string){
 		var parsed_cookies = cookie.parse(cookie_string);
@@ -64,18 +65,22 @@ io.on('connection', function(socket){
 		sessionStore.get(sessionId, function(error, session){
 			console.log(session.passport.user);
 			socket.userid = session.passport.user;
+			mysqlConnection.getRowById(socket.userid, function(err, result){
+				socket.username = result[0].userName;
+			});
 		});
 	}
 	socket.on('join', function(room){
 		mysqlConnection.mysqlCreateChat(room, function(result) {
 			socket.leave(socket.room);
 			room = room + "#" + result.insertId;
-			console.log(room);
-			console.log(session);
 			socket.room = room;
 			socket.roomid = result.insertId;
+			io.to(socket.id).emit('newmsg', data);
 			socket.join(room, function(){
-				console.log(socket.rooms);
+				mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
+					io.to(socket.id).emit('allchatmessages', result);	
+				});
 			});
 		});
 	});
@@ -84,10 +89,10 @@ io.on('connection', function(socket){
  	* Emit new messages when the msg even is recieved
  	*/
 	socket.on('msg', function(msg){
-		console.log("message recieved: " + msg + "submitting to room " + socket.room);
-		console.log("message is from is " + socket.userid + " from chatnumber " + socket.roomid);
 		mysqlConnection.mysqlStoreMessage(socket.roomid, socket.userid, msg.message);
-		console.log(msg);
+		console.log("Message sent from " + socket.username);
+		msg.username = socket.username;
+		msg.date = new Date();
 		io.to(socket.room).emit('newmsg', msg);
 	})
 })
@@ -101,7 +106,6 @@ app.post('/action_page.php',function(req, res){
 	parsedInfo.username = req.body.username;
 	mysqlConnection.mysqlCreateAccount(parsedInfo.username, parsedInfo.email, parsedInfo.psw, function(result){
 		if(result){
-			console.log("Account created successfully");
 			res.redirect('back');
 		} else {
 			res.end("Account could not be created, this message will become more helpful with time");	
