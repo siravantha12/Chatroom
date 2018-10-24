@@ -66,6 +66,19 @@
 			modal.style.display = "none";
 		}
 	}
+
+	function checkCookie(){
+		var cookieEnabled = navigator.cookieEnabled;
+		if (!cookieEnabled){ 
+			document.cookie = "username";
+			cookieEnabled = document.cookie.indexOf("username")!=-1;
+		}
+		return cookieEnabled || showCookieFail();
+	}
+
+	function showCookieFail(){
+		console.log("Cookie is not enabled!");
+	}
 	</script>
 
 	</body>
