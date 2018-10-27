@@ -10,8 +10,8 @@ app.get('/',function(req,res){
 
 io.on('connection', function(socket){
     //Emits to all people that a user connected
-    io.emit('chat message','user connected');
-
+    //io.emit('chat message','user connected');
+    socket.broadcast.emit('chat message', "this is a test");
     socket.on('chat message', function(msg){
         console.log('message: ' + msg);
         io.emit('chat message', msg);
