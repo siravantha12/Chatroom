@@ -2,77 +2,35 @@
 <html>
 <head>
 	<title>Profile</title>
-
-	<style type='text/css'>
-		
-		body{
-			background-color: rgb(80, 80, 80);
-		}
-
-		#names{
-			font: Calibri;
-			color:white;
-			font-size: 18px;
-			margin-top: 200px;
-			margin-left: 50px;
-
-		}
-
-		#changes{
-
-			margin-top: 50px;
-			margin-left: 50px;
-
-		}
-
-		#logout{
-			background color: red;
-			font-size: 30px;
-			margin-top: 50px;
-			margin-left: 50px;
-			color:red;
-
-			border:1px solid #666;
-			width:90px;
-		}
-
-		#opener{
-			font-size: 70px;
-		}
-
-	</style>
-
+<link rel="stylesheet" type="text/css" href="CSS/settings profileLooks.css">
+	
 </head>
 <body>
 
-	<div id='opener'>
+	<div class="opener">
 		<p>My Profile</p>
 	</div>
 
-	<div id='names'>
-		Name:         
+	<div class="names">
+		Name: Display Name
 		<br>
 		<br>
-		Email:      
+		Email: Display Email
 		<br>
 		<br> 
-		Username:
+		Username: Display Username
  	</div>
 	
-	<div id='changes'>
+	<div class="changes">
 		<input type="submit" name="submit" value="Change Name">
 		<input type="submit" name="submit" value="Change Email">
 		<input type="submit" name="submit" value="Change Password">
 		<input type="submit" name="submit" value="Change Username">
 	
 	</div>
-
-	<div id=logout>
-		<!--<input type="submit" name="submit" value="Logout">-->
-		Logout
+	<div class="Logout">
+		<button class="logout">Logout</button>
 	</div>
-
-
 
 </body>
 </html>

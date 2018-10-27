@@ -37,6 +37,7 @@ form button {
 	padding: 12px; 
 	color: rgb(158,238,250);
 	font-size: 14px;
+	cursor: pointer;
 }
 
 
@@ -49,13 +50,21 @@ form button {
 	color: #fff;
 }
 
-.btn{
+.hmbtn{
 	background: url(../styles/smallLogo.png) no-repeat center;
 	border: none;
 	width: 50px;
 	height: 50px;
 	margin-left: 8px;
 	margin-top: 3px;
+	cursor: pointer;
+}
+
+.addbtn{
+	background: url(../styles/plussymbolsmall.png) no-repeat center;
+	border: none;
+	width: 30px;
+	height: 30px;
 	cursor: pointer;
 }
 
