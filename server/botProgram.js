@@ -17,6 +17,12 @@ io.on('connection', function(socket){
         console.log('message: ' + msg);
         io.emit('chat message', msg);
       });
+
+    //Emits tp all people that a user disconnect
+    //Don't have to exclude the user who disconnected becuase its already disconnected
+    socket.on('disconnect', function(){
+        io.emit('chat message',"User disconnected")
+    });
 });
 
 http.listen(3456, function(){
