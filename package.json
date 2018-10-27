@@ -18,6 +18,13 @@
   "homepage": "https://github.com/utk-cs/team-dijkstra#readme",
   "dependencies": {
     "body-parser": "*",
+<<<<<<< HEAD:server/package.json
+    "connect": "*",
+    "cookie-parser": "^1.4.3",
+    "ejs": "^2.6.1",
+    "express": "*",
+    "mysql": "^2.16.0",
+=======
     "connect": "^3.6.6",
     "connect-flash": "*",
     "cookie-parser": "^1.4.3",
@@ -27,6 +34,7 @@
     "mysql": "^2.16.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+>>>>>>> 70884cd8b420c623af5fa80cdde8f228f4ff2741:package.json
     "request": "*",
     "serve-static": "*",
     "socket.io": "*"

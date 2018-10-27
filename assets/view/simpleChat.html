@@ -4,6 +4,16 @@
         <title> Simple Chat Room </title>
     </head>
     <body>
+        <script>
+        function checkCookie(){
+            var cookieEnabled = navigator.cookieEnabled;
+            if (!cookieEnabled){ 
+                document.cookie = "testcookie";
+                cookieEnabled = document.cookie.indexOf("testcookie")!=-1;
+            }
+            return cookieEnabled || showCookieFail();
+        }
+        </script>
         <div style="border: 1px solid green; width:2.5in; text-align: center">
             Simple Chat Room
         </div>

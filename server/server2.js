@@ -5,18 +5,34 @@ var io = require('socket.io')(http);
 var path = require("path");
 var bodyParser = require('body-parser');
 var mysqlConnection = require("./mysql.js");
-var ejs = require("ejs");
+var session = require('express-session');
+var passport = require('passport');
+var flash = require('connect-flash');
 var cookieParser = require('cookie-parser');
+var MySQLStore = require('express-mysql-session')(session);
+var connect = require('connect');
+var cookie = require('./node_modules/cookie');
+
+require('../config/passport')(passport);
+
+var mysqlOptions = {
+	host: "216.96.149.200",
+	user: "cbates10",
+	password: "Imbroglio3724!",
+	database: "chat"
+};
+
+var sessionStore = new MySQLStore(mysqlOptions);
 
 app.use(cookieParser());
-
-/*
- * Simple Setup for View/Render Engine
- */
-
+app.use(session({ secret: 'themoonlandingwasfake', store: sessionStore }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 app.set('views',path.join(__dirname+'/../assets/view'))
-app.engine('html',ejs.renderFile);
+app.engine('html',require("ejs").renderFile);
 app.set('view engine','html');
+
 
 app.use(express.static(__dirname + "/../assets"));
 
@@ -33,27 +49,70 @@ app.get('/',function(req,res){
 app.get('/chatPage', function(req,res){
     res.render('../../server/chatPage.html');
 });
+
 /*
  * Error Page when Error Occur
  * Mostly when database isn't accesible or server is down.
  */
 app.get('/errorPage',function(req,res){
 	console.log("Went to Error Page for some Reason");
-	res.render(); //include errorpage when ErrorPage.html is created
+	res.render('Error-sign-up.html'); //include errorpage when ErrorPage.html is created
 });
 
 /*
  * Simple HTML page about the project and developers 
  */
 app.get('/aboutUs',function(req,res){
-	res.render(); //include aboutus page when aboutUs.html is created
+	//res.render(); //include aboutus page when aboutUs.html is created
+	//Simple code to express text while aboutUs is being made/
+	res.send('Created by Team-Dijsktra. (UTK 340 Project). Basic Chatroom Webpage.');
 });
 
-app.use(bodyParser.urlencoded({extended:true}));
-
 /*
- * Simple Post that index.html get after signing up for new account
+ * Control client connections. Commented out code allows sockets to be grouped into individual
+ * "chat rooms" (socket groups). Commented out for ease of testing.
  */
+
+io.on('connection', function(socket){
+	/*
+ 	* Connect to a chatroom by name
+ 	*/
+	var cookie_string = socket.request.headers.cookie;
+	if(cookie_string){
+		console.log("it is not undefined");
+		var parsed_cookies = cookie.parse(cookie_string);
+		var connect_sid = parsed_cookies['connect.sid'];
+		var sessionId = connect_sid.match(/(?<=s:).*?(?=\.)/);
+		console.log("value found from regex is below");
+		console.log(sessionId[0]);
+		sessionStore.get(sessionId, function(error, session){
+			console.log(session);
+			console.log("The above is the session");
+		});
+	}
+	socket.on('join', function(room){
+		mysqlConnection.mysqlCreateChat(room, function(result) {
+			socket.leave(socket.room);
+			room = room + "#" + result.insertId;
+			console.log(room);
+			console.log(session);
+			socket.room = (room);
+			socket.join(room, function(){
+				console.log(socket.rooms);
+			});
+		});
+	});
+
+	/*
+ 	* Emit new messages when the msg even is recieved
+ 	*/
+	socket.on('msg', function(msg){
+		console.log("message recieved: " + msg + "submitting to room " + socket.room);
+		io.to(socket.room).emit('newmsg', msg);
+	})
+})
+
+app.use(bodyParser.urlencoded({extended:true}));
 
 app.post('/action_page.php',function(req, res){
 	var parsedInfo = {};
@@ -63,9 +122,14 @@ app.post('/action_page.php',function(req, res){
 	mysqlConnection.mysqlCreateAccount(parsedInfo.username, parsedInfo.email, parsedInfo.psw, function(result){
 		if(result){
 			console.log("Account created successfully");
+			createCookie(res,parsedInfo.username,0);
+			//Only Username for the moment, will ask front end to include checkbox, "Remember Me".
+			//function:
+			//if(checkboxclick())){creatcookie(res,parsedInfo.psw,0)}; 
 			res.redirect('back');
 		} else {
 			res.end("Account could not be created, this message will become more helpful with time");	
+			res.redirect('/errorPage'); //Render Error-Page.html when Error-Page html is finished
 		}
 	});
 });
@@ -74,43 +138,35 @@ app.post('/action_page.php',function(req, res){
  * Post response on userForm html. Will redirect client to chatpage if the user is validated.
  * Will tell the user they are invalid otherwise.
  */
-app.post('/',function(req,res){
-	console.log("Inside post");
-	var parsedInfo = {};
-	parsedInfo.userName = req.body.username;
-	parsedInfo.password = req.body.password;
-    console.log("validating user");
-    res.redirect('/chatPage');
-	mysqlConnection.mysqlValidateUser(parsedInfo.userName, parsedInfo.password, function(result){
-		if(result){
-			res.cookie('name', parsedInfo.userName).send('cookie set'); //Sets name = express cookie
-			res.cookie('password',parsedInfo.password).send('cookie set'); //Sets Password = cookie
-			res.cookie(name, 'value', {expire: 3000 + Date.now()}); //Set expiration date (will most likley put a week before testing)
-			res.cookie(password,'value',{expire: 3000 + Date.now()});
-			//For Now we will clear cookie so it doesn't save during testing
-			//Will Change once we demonstrate
-			res.clearCookie(name); //Clear cookie with name 'name'	
-			res.clearCookie(password);		
-			return res.redirect('/chatPage');
-		} else {
-			res.end("You are invalid");
-		}
-	});
-});
+app.post('/login', passport.authenticate('local-login', {
+	successRedirect : '/chatPage',
+	failureRedirect : '/',
+	failureFlash : true
+}));
 
 /*
  * Listen on local network on port 3456 for incoming connections.
  */
+
+function isLoggedIn(req, res, next){
+	if(req.isAuthenticated()){
+		return next();
+	} else {
+		res.redirect('/');
+	}
+}
+
 http.listen(3456, '0.0.0.0', function(){
 	console.log("listening on port: 3456");
 });
-
-/*
- * Basic Function to set Cookie
- */
 
 function createCookie(res,CookieName,value){
 	res.cookie(CookieName,CookieName).send('cookie set');
 	res.cookie(CookieName,'value',{expire: 3000 + Data.now()});
 	res.clearCookie(CookieName); //Clear For Now
+	deleteCookie(res,CookieName,value);
 }
+
+function deleteCookie(res,CookieName,value){
+	res.clearCookie(CookieName);
+} 
