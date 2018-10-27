@@ -11,7 +11,8 @@ app.get('/',function(req,res){
 io.on('connection', function(socket){
     //Emits to all people that a user connected
     //io.emit('chat message','user connected');
-    socket.broadcast.emit('chat message', "this is a test");
+    //Emits to all people beside send (user that have connected) that a user connected
+    socket.broadcast.emit('chat message', "User connected");
     socket.on('chat message', function(msg){
         console.log('message: ' + msg);
         io.emit('chat message', msg);
