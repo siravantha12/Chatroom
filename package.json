@@ -1,0 +1,34 @@
+{
+  "name": "chatroom",
+  "version": "1.0.0",
+  "description": "packages for chatroom",
+  "main": "server/testServer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/utk-cs/team-dijkstra.git"
+  },
+  "author": "cbates10",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/utk-cs/team-dijkstra/issues"
+  },
+  "homepage": "https://github.com/utk-cs/team-dijkstra#readme",
+  "dependencies": {
+    "body-parser": "*",
+    "connect": "^3.6.6",
+    "connect-flash": "*",
+    "cookie-parser": "^1.4.3",
+    "express": "*",
+    "express-mysql-session": "*",
+    "express-session": "*",
+    "mysql": "^2.16.0",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "request": "*",
+    "serve-static": "*",
+    "socket.io": "*"
+  }
+}
