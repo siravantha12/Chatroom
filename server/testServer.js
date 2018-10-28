@@ -67,6 +67,7 @@ io.on('connection', function(socket){
 			socket.userid = session.passport.user;
 			mysqlConnection.getRowById(socket.userid, function(err, result){
 				socket.username = result[0].userName;
+				io.to(socket.id).emit('username', socket.username);
 			});
 		});
 	}
@@ -76,7 +77,7 @@ io.on('connection', function(socket){
 			room = room + "#" + result.insertId;
 			socket.room = room;
 			socket.roomid = result.insertId;
-			io.to(socket.id).emit('newmsg', data);
+			//io.to(socket.id).emit('newmsg', data);
 			socket.join(room, function(){
 				mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
 					io.to(socket.id).emit('allchatmessages', result);	
@@ -92,7 +93,10 @@ io.on('connection', function(socket){
 		mysqlConnection.mysqlStoreMessage(socket.roomid, socket.userid, msg.message);
 		console.log("Message sent from " + socket.username);
 		msg.username = socket.username;
-		msg.date = new Date();
+		var date = new Date();
+		msg.date = date.toTimeString();
+		console.log(msg);
+		console.log(msg.message);
 		io.to(socket.room).emit('newmsg', msg);
 	})
 })
