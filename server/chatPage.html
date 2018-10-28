@@ -20,6 +20,12 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
+	if(socket.username){
+		document.getElementById("username").innerHTML += '<div>No Shit its good</div>';
+	} else {
+		document.getElementById("username").innerHTML += '<div>Oh shit whatup</div>';
+	}
+	document.getElementById("username").innerHtml += socket.username;
 	<!-- gets the text within the text input box and passes it to the server -->
         function sendMessage() {
 	
@@ -36,9 +42,16 @@
 		}
 	}
 	<!-- recieves text from the server and writes it to the page -->
+	socket.on('username', function(data){
+		socket.username = data;
+	});
         socket.on('newmsg', function(data) {
-            document.getElementById("demo").innerHTML = "new message recieved";
-	    document.getElementById('message-container').innerHTML += '<div><b>' + data.message + '</div>';
+		document.getElementById("demo").innerHTML = "new message recieved";
+		if(socket.username == data.username){	
+	    		document.getElementById('message-container').innerHTML += '<div class = "usermessage"><strong>' + data.username + '</strong><br><p>' + data.message + '</p><span>' + data.date + '</span></div>';
+		} else {
+	    		document.getElementById('message-container').innerHTML += '<div class = "chatmessage"><strong>' + data.username + '</strong><br><p>' + data.message + '</p><span>' + data.date + '</span></div>';
+		}
         });
 	socket.on('allchatmessages', function(data) {	
 	    document.getElementById('message-container').innerHTML += '<div><b>Message package recieved from chatroom</div>';
