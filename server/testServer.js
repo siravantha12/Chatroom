@@ -51,6 +51,7 @@ app.get('/chatPage', isLoggedIn, function(req,res){
  * Control client connections. Commented out code allows sockets to be grouped into individual
  * "chat rooms" (socket groups). Commented out for ease of testing.
  */
+var currentConnections = {};
 
 io.on('connection', function(socket){
 	/*
@@ -66,6 +67,9 @@ io.on('connection', function(socket){
 			console.log(session.passport.user);
 			socket.userid = session.passport.user;
 			mysqlConnection.getRowById(socket.userid, function(err, result){
+				var userId = result[0].userName + socket.userid;
+				console.log(socket.id);
+				currentConnections[userId] = socket.id;
 				socket.username = result[0].userName;
 				io.to(socket.id).emit('username', socket.username);
 			});
@@ -74,11 +78,12 @@ io.on('connection', function(socket){
 	socket.on('join', function(room){
 		mysqlConnection.mysqlCreateChat(room, function(result) {
 			socket.leave(socket.room);
+			var roomname = room;
 			room = room + "#" + result.insertId;
 			socket.room = room;
 			socket.roomid = result.insertId;
-			//io.to(socket.id).emit('newmsg', data);
 			socket.join(room, function(){
+				io.to(socket.id).emit('joinedroom', roomname);
 				mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
 					io.to(socket.id).emit('allchatmessages', result);	
 				});
@@ -91,14 +96,18 @@ io.on('connection', function(socket){
  	*/
 	socket.on('msg', function(msg){
 		mysqlConnection.mysqlStoreMessage(socket.roomid, socket.userid, msg.message);
-		console.log("Message sent from " + socket.username);
 		msg.username = socket.username;
 		var date = new Date();
 		msg.date = date.toTimeString();
-		console.log(msg);
-		console.log(msg.message);
 		io.to(socket.room).emit('newmsg', msg);
-	})
+	});
+
+	socket.on('inviteuser', function(user){
+		console.log(currentConnections[user]);
+		if(currentConnections[user]){
+			io.to(currentConnections[user]).emit('inviteduser', socket.room);
+		} 
+	});
 })
 
 app.use(bodyParser.urlencoded({extended:true}));
