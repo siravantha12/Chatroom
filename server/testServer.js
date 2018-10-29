@@ -79,6 +79,7 @@ io.on('connection', function(socket){
 		mysqlConnection.mysqlCreateChat(room, function(result) {
 			socket.leave(socket.room);
 			var roomname = room;
+			socket.roomname = room;
 			room = room + "#" + result.insertId;
 			socket.room = room;
 			socket.roomid = result.insertId;
@@ -105,8 +106,18 @@ io.on('connection', function(socket){
 	socket.on('inviteuser', function(user){
 		console.log(currentConnections[user]);
 		if(currentConnections[user]){
-			io.to(currentConnections[user]).emit('inviteduser', socket.room);
+			io.to(currentConnections[user]).emit('inviteduser', socket.roomname, socket.roomid);
 		} 
+	});
+
+	socket.on('acceptinvite', function(room, roomid){
+		socket.leave(socket.room);
+		socket.roomname = room;
+		socket.roomid = roomid;
+		socket.room = room + "#" + roomid;
+		socket.join(socket.room, function(){
+			io.to(socket.id).emit('joinedroom', socket.roomname);
+		});
 	});
 })
 
