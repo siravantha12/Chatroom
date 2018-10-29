@@ -73,9 +73,9 @@
 	socket.on('joinedroom', function(data) {
 		document.getElementById('roomname').innerHTML = "<strong>You are in chatroom " + data + "</strong>";
 	});
-	socket.on('inviteduser', function(data) {
-	        document.getElementById("demo").innerHTML = "Message recieved";
+	socket.on('inviteduser', function(roomname, roomid) {
 		document.getElementById('invited').innerHTML = "<strong>YOU ARE POPULAR</strong>";
+	        socket.emit('acceptinvite', roomname, roomid);
 	});
     </script>
     </body>
