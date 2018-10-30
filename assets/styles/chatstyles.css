@@ -14,35 +14,70 @@ form {
 	width: 100%; 
 }
 
-form input { 
+input { 
 	color: rgb(200,200,200);
 	border: 0; 
 	padding: 12px; 
-	width: 45%; 
-	margin-left: 22%;
-	margin-bottom: 25px;
 	font-size: 14px;
+    background-color: rgb(115,115,115);
 }
 
-input[id="m"], textarea{
-	background-color: rgb(115,115,115);
+input[id="message"]{
+    position: fixed;
+    left:0;
+    bottom: 0;
+    width: 80%; 
+	margin-left: 220px;
+	margin-bottom: 25px;
 	border: none;
 }
 
-form button { 
-	width: 7%; 
+input::placeholder {
+    color: white;
+}
+
+button { 
 	background: rgb(129, 104,161);
 	border: none; 
 	padding: 12px; 
 	color: rgb(158,238,250);
 	font-size: 14px;
 	cursor: pointer;
+        margin-bottom: 25px;
 }
 
+button#send{
+    width: 7%; 
+    position: fixed;
+    right: 0;
+    bottom: 0;
+}
+
+button#invite, button#chat{
+    width: 100px;
+    margin-top: 10px;
+    margin-left: 50px;
+}
+
+.chatmessage {
+    width: 95%;
+    margin-left: 2%;
+    background-color: deepskyblue;
+    border-radius: 10px;
+}
+
+.message-container {
+    position: fixed;
+    width: 88%;
+    height: 90%;
+    left: 220px;
+    background-color: aliceblue;
+    border-radius: 10px;
+}
 
 .sidenav{
-	height: 100%;
-	width: 20%;
+	height: 50%;
+	width: 200px;
 	position: fixed;
 	top:0;
 	background-color: rgb(49,52,53);
@@ -68,11 +103,11 @@ form button {
 }
 
 .friendslist{
-	height: 100%;
-	width: 20%;
+	height: 50%;
+	width: 200px;
 	position: fixed;
-	top: 0;
-	right: 0;
+	top: 50%;
+	left: 0;
 	background-color: rgb(49,52,53);
 	color: #fff;
 }
