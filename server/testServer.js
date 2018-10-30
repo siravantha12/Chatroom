@@ -43,7 +43,7 @@ app.get('/',function(req,res){
  * Publish chatPage.html 
  */
 app.get('/chatPage', isLoggedIn, function(req,res){
-	res.sendFile(path.join(__dirname+'/chatPage.html'));
+	res.sendFile(path.join(__dirname+'/../assets/view/chatPage.html'));
 });
 
 
@@ -71,7 +71,7 @@ io.on('connection', function(socket){
 				console.log(socket.id);
 				currentConnections[userId] = socket.id;
 				socket.username = result[0].userName;
-				io.to(socket.id).emit('username', socket.username);
+				io.to(socket.id).emit('username', userId);
 			});
 		});
 	}
