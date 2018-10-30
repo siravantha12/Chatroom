@@ -4,8 +4,10 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require("path");
 
+app.use(express.static(__dirname + "/../assets"));
+
 app.get('/',function(req,res){
-    res.sendFile(path.join(__dirname+'/botchat.html'));
+    res.sendFile(path.join(__dirname+'/../assets/view/chatpagecopy.html'));
 });
 
 io.on('connection', function(socket){
