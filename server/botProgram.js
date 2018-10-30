@@ -11,14 +11,14 @@ app.get('/',function(req,res){
 io.on('connection', function(socket){
     //Emits to all people that a user connected
     //io.emit('chat message','user connected');
-    //Emits to all people beside send (user that have connected) that a user connected
+    //Emits to all people beside sender (user that have connected) that a user connected
     socket.broadcast.emit('chat message', "User connected");
     socket.on('chat message', function(msg){
         console.log('message: ' + msg);
         io.emit('chat message', msg);
       });
 
-    //Emits tp all people that a user disconnect
+    //Emits to all people that a user disconnect
     //Don't have to exclude the user who disconnected becuase its already disconnected
     socket.on('disconnect', function(){
         io.emit('chat message',"User disconnected")
