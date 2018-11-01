@@ -7,7 +7,8 @@ var path = require("path");
 app.use(express.static(__dirname + "/../assets"));
 
 app.get('/',function(req,res){
-    res.sendFile(path.join(__dirname+'/../assets/view/chatpagecopy.html'));
+    //res.sendFile(path.join(__dirname+'/../assets/view/chatpagecopy.html'));
+    res.sendFile(path.join(__dirname+'/botchat.html'))
 });
 
 io.on('connection', function(socket){
@@ -17,6 +18,14 @@ io.on('connection', function(socket){
     socket.broadcast.emit('chat message', "User connected");
     socket.on('chat message', function(msg){
         console.log('message: ' + msg);
+        var badwords = ['fuck'];
+        var i;
+        for(i=0;i <badwords.length;i++){
+            if(msg == badwords[i]){
+                msg = "****";
+                break;
+            }
+        }
         io.emit('chat message', msg);
       });
 
