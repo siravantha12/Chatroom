@@ -18,12 +18,8 @@ io.on('connection', function(socket){
     socket.broadcast.emit('chat message', "User connected");
     socket.on('chat message', function(msg){
         console.log('message: ' + msg);
-        var i;
-
-        if(msg.indexOf("/bot add") !== -1){
-            msg = msg.replace('/bot add ','');
-            badwords.push(msg);
-        }
+        var i,word;
+        word = checkBot(msg);
         for(i=0;i<badwords.length;i++){
             if(msg == badwords[i]){
                 msg = "****";
@@ -43,14 +39,12 @@ io.on('connection', function(socket){
 http.listen(3456, function(){
     console.log('listening on localhost:3456');
 });
-/*
-function checkBot(msg,badwords){
-    var word;
-    if(msg.indexOf("/bot add") !== -1){
-        word = msg.replace('/bot add ','');
-        console.log(word);
 
+function checkBot(msg){
+    if(msg.indexOf("/bot add") !== -1){
+        msg = msg.replace('/bot add ','');
+        console.log("Knew BadWord: "+msg);
+        badwords.push(msg);
     }
-    return badwords;
+    return msg;
 }
-*/
