@@ -20,6 +20,7 @@ io.on('connection', function(socket){
         console.log('message: ' + msg);
         var badwords = ['fuck'];
         var i;
+        checkBot(msg);
         for(i=0;i <badwords.length;i++){
             if(msg == badwords[i]){
                 msg = "****";
@@ -39,3 +40,9 @@ io.on('connection', function(socket){
 http.listen(3456, function(){
     console.log('listening on localhost:3456');
 });
+
+function checkBot(msg){
+    if(msg.indexOf("/bot add") !== -1){
+        console.log("Added Bad Word");
+    }
+}
