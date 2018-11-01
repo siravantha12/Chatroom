@@ -3,7 +3,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require("path");
-
+var badwords = ["fuck"];
 app.use(express.static(__dirname + "/../assets"));
 
 app.get('/',function(req,res){
@@ -18,10 +18,13 @@ io.on('connection', function(socket){
     socket.broadcast.emit('chat message', "User connected");
     socket.on('chat message', function(msg){
         console.log('message: ' + msg);
-        var badwords = ['fuck'];
         var i;
-        checkBot(msg);
-        for(i=0;i <badwords.length;i++){
+
+        if(msg.indexOf("/bot add") !== -1){
+            msg = msg.replace('/bot add ','');
+            badwords.push(msg);
+        }
+        for(i=0;i<badwords.length;i++){
             if(msg == badwords[i]){
                 msg = "****";
                 break;
@@ -40,9 +43,14 @@ io.on('connection', function(socket){
 http.listen(3456, function(){
     console.log('listening on localhost:3456');
 });
-
-function checkBot(msg){
+/*
+function checkBot(msg,badwords){
+    var word;
     if(msg.indexOf("/bot add") !== -1){
-        console.log("Added Bad Word");
+        word = msg.replace('/bot add ','');
+        console.log(word);
+
     }
+    return badwords;
 }
+*/
