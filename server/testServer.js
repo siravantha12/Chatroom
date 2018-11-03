@@ -64,7 +64,6 @@ io.on('connection', function(socket){
 		var connect_sid = parsed_cookies['connect.sid'];
 		var sessionId = connect_sid.match(/(?<=s:).*?(?=\.)/);
 		sessionStore.get(sessionId, function(error, session){
-			console.log(session.passport.user);
 			socket.userid = session.passport.user;
 			mysqlConnection.getRowById(socket.userid, function(err, result){
 				var userId = result[0].userName + socket.userid;
@@ -72,6 +71,9 @@ io.on('connection', function(socket){
 				currentConnections[userId] = socket.id;
 				socket.username = result[0].userName;
 				io.to(socket.id).emit('username', userId);
+			});
+			mysqlConnection.getFriends(socket.userId, function(err, result){
+				io.to(socket.id).emit('friendslist', result);
 			});
 		});
 	}
