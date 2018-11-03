@@ -22,6 +22,12 @@ function createConnection() {
 	return con;
 }
 
+exports.getChatrooms = function(userid, callback){
+	baseConnection.query("select r.roomid, c.roomName from roomusers r join chatrooms c on r.roomid = c.roomid where r.accountNumber = " + userid + ";", function (err, result, fields){
+		callback(err, result);
+	});
+}
+
 exports.addFriends = function(userid1, userid2, callback){
 	baseConnection.query("insert into friends values (" + userid1 + "," +userid2 +");", function (err, result, fields) {
 		callback(err, result);
