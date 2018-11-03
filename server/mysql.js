@@ -22,6 +22,18 @@ function createConnection() {
 	return con;
 }
 
+exports.addFriends = function(userid1, userid2, callback){
+	baseConnection.query("insert into friends values (" + userid1 + "," +userid2 +");", function (err, result, fields) {
+		callback(err, result);
+	});
+}
+
+exports.getFriends = function(userid, callback) {
+	baseConnection.query("select f.friendid2, c.userName from friends f join chataccounts c on c.accountNumber = f.friendid2 where friendid1 = " + userid + ";", function (err, result, fields) {
+		callback(err, result);
+	});
+}
+
 exports.getMessagesForRoom = function(roomid, callback){
 	baseConnection.query("select userName, messagetime, chatmessage from chatroommessages natural join chataccounts where roomid = " + roomid + ";", function (err, result, fields){
 		callback(err, result);
