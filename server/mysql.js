@@ -22,7 +22,7 @@ function createConnection() {
 	return con;
 }
 
-exports.addChatroomToAccount = function(userid, chatroomid) {
+exports.addChatroomToAccount = function(userid, chatroomid, callback) {
 	baseConnection.query("insert into roomusers values (" + chatroomid + "," + userid + ");", function (err, result, fields){
 		callback(err, result);
 	});
