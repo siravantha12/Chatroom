@@ -10,8 +10,6 @@ module.exports = function(passport){
 
 	passport.deserializeUser(function(id, done){
 		mysqlConnection.getRowById(id, function(err, result){
-			console.log("deserializing user");
-			console.log(result[0]);
 			done(err, result[0]);
 		});
 	});
