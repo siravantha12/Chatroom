@@ -18,6 +18,9 @@
 	    <button id="chat" type = "button" name = "roombutton" onclick = "joinRoom()">
 		  Connect to Room
 	    </button>
+	    <div class="chatroomlist" id="chatroomlist">
+		
+	    </div>
         <div id="roomname"></div>
     </div>
     <div class="friendslist">
@@ -63,6 +66,9 @@
 			socket.emit('inviteuser', userid);
 		}
 	}
+	function switchRoom(index) {
+		socket.emit('switch', index);
+	}
 	<!-- recieves text from the server and writes it to the page -->
 	socket.on('username', function(data){
 		socket.username = data;
@@ -75,8 +81,14 @@
 			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
 		}
         });
+	socket.on('chatroomlist', function(roomlist) {
+		socket.roomlist = roomlist;
+		for(var i = 0; i < roomlist.length; i++){
+			document.getElementById('chatroomlist').innerHTML += '<button type="button" name="button" onclick = "switchRoom(' + i + ')">' + roomlist[i] + '</button>';
+		}
+	});
 	socket.on('allchatmessages', function(data) {
-	    document.getElementById('message-container').innerHTML += '<div><b>Message package recieved from chatroom</div>';
+	    	document.getElementById('message-container').innerHTML += '<div><b>Message package recieved from chatroom</div>';
 	});
 	socket.on('joinedroom', function(data) {
 		document.getElementById('roomname').innerHTML = "<strong>You are in chatroom " + data + "</strong>";
