@@ -33,7 +33,7 @@ io.on('connection', function(socket){
     //Emits to all people that a user disconnect
     //Don't have to exclude the user who disconnected becuase its already disconnected
     socket.on('disconnect', function(){
-        io.emit('chat message',"User disconnected")
+        io.emit('chat message',UserDisc("User"))
     });
 });
 
@@ -48,4 +48,9 @@ function checkBot(msg){
         badwords.push(msg);
     }
     return msg;
+}
+
+function UserDisc(usersql){
+    username = "User ";
+    return username + "Disconnected."
 }
