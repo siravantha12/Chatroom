@@ -3,9 +3,15 @@ body{
 	padding: 0;
 	margin-top: 100px;
 	margin-bottom: 10px;
-	background-color: none;
+	background-color: gray;
 	font-family: sans-serif;
 	font: 16px, white;
+	font-size: 20px;
+}
+
+input[type=text]{
+	border:2px solid grey;
+	border-radius: 10px;
 }
 
 .error{
@@ -15,6 +21,9 @@ body{
 
 .button{
 	margin-left:200px;
+	border-radius: 10px;
+	border: 2px solid ;
+	
 }
 
 .click{
@@ -28,13 +37,13 @@ body{
 .username{
 
 	font-size: 20px;
-	border:auto;
-	border-right: 20px red;
-	border-left: 5px red;
-	background-color:
-	margin:auto;
-	margin-left: 70px;
-	cursor: pointer;
+
+}
+
+.bar{
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
 
 }
 
@@ -49,12 +58,8 @@ body{
 }
 
 .email{
-	margin-top:20px;
-	margin-left: 70px;
-	border:auto;
-	border-right: 20px red;
-	border-left: 5px red;
-	background-color:
+
+	font-size: 20px;
 
 }
 
@@ -83,4 +88,21 @@ body{
 	border-right: 20px red;
 	border-left: 5px red;
 	background-color:
+}
+.button{
+	padding: 20px;
+	border-radius: 30%;
+	border:none;
+	color:black;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+}
+
+.submit{
+	border-radius: 10px;
+	color:black;
+	background-color: lightgray;
 }
