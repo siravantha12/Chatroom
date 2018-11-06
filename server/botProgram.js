@@ -16,7 +16,7 @@ io.on('connection', function(socket){
     //io.emit('chat message','user connected');
     //Emits to all people beside sender (user that have connected) that a user connected
     socket.broadcast.emit('username', "Test");
-    socket.broadcast.emit('chat message', "User connected");
+    socket.broadcast.emit('chat message', UserConn("user"));
     socket.on('chat message', function(msg){
         console.log('message: ' + msg);
         var i,word;
@@ -52,5 +52,10 @@ function checkBot(msg){
 
 function UserDisc(usersql){
     username = "User ";
-    return username + "Disconnected."
+    return username + "Disconnected.";
+}
+
+function UserConn(usersql){
+    username = "User ";
+    return username + "Connected.";
 }
