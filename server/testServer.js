@@ -81,14 +81,24 @@ io.on('connection', function(socket){
 					chatrooms[i] = result[i].roomName + "#" + result[i].roomid;
 					socket.roomlist.push(chatrooms[i]);
 				}
+				console.log("Submitting chatroom list to client");
+				io.to(socket.id).emit('chatroomlist', socket.roomlist);
 				console.log(socket.roomlist);
 			});
 		});
 	}
 
 	socket.on('switch', function(index) {
+		console.log("Switching client to room " + socket.roomlist[index]);
 		socket.leave(socket.room);
-		socket.join(socket.roomlist[index]);
+		socket.room = socket.roomlist[index];
+		socket.join(socket.room, function(){
+			io.to(socket.id).emit('joinedroom', socket.room);
+			mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
+				io.to(socket.id).emit('allchatmessages', result);	
+			});
+		});
+
 	});
 
 	socket.on('join', function(room){
