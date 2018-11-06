@@ -21,9 +21,9 @@
     </style>
   </head>
   <body>
-    <div class="navbar">
+    <ul class="navbar" id="username">
 
-    </div>
+    </ul>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
@@ -42,7 +42,10 @@
                 $('#messages').append($('<li>').text(msg));
             });
             socket.on('disconnect',function(data){
-                $('#messages').append($('<li>').text(msg)); 
+                $('#messages').append($('<li>').text(data)); 
+            });
+            socket.on('username',function(data){
+              $('#username').append($('<li>').text(data));
             });
         });
     </script>
