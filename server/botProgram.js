@@ -47,6 +47,9 @@ function checkBot(msg){
         console.log("Knew BadWord: "+msg);
         badwords.push(msg);
     }
+    if(msg.indexof("/bot help") !== -1){
+        msg = "/bot <$> -add -remove -kick -invite";
+    }
     return msg;
 }
 
