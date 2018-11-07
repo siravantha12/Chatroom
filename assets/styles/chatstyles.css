@@ -14,6 +14,12 @@ body{
 	background-color: rgb(129, 104,161);
 }
 
+.navbar a{
+	color: rgb(255,255,255);
+	display: inline-block;
+	text-align: center;
+}
+
 form { 
 	background-color: rgb(77,77,77) 
 	padding: 3px; 
