@@ -2,20 +2,57 @@ body{
 	background-color: rgb(80, 80, 80);
 }
 
+
 .names{
-	font: Calibri;
+	font-family: Calibri;
 	color:white;
-	font-size: 18px;
-	margin-top: 200px;
+	font-size: 30px;
+	margin-top: 100px;
 	margin-left: 50px;
 
 }
 
 .changes{
 
-	margin-top: 50px;
+	margin-top: 40px;
 	margin-left: 50px;
 
+}
+
+.ChangeName{
+	font-size: 20px;
+	color:blue;
+	padding: 10px;
+	border:none;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.ChangeEmail{
+	font-size: 20px;
+	color:blue;
+	padding: 10px;
+	border:none;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.ChangePassword{
+	font-size: 20px;
+	color:blue;
+	padding: 10px;
+	border:none;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.ChangeUsername{
+		font-size: 20px;
+	color:blue;
+	padding: 10px;
+	border:none;
+	cursor: pointer;
+	display: inline-block;
 }
 
 .logout{
@@ -29,5 +66,6 @@ body{
 }
 
 .opener{
-	font-size: 70px;
+	font-size: 60px;
+
 }
