@@ -47,6 +47,9 @@
             socket.on('username',function(data){
               $('#username').append($('<li>').text(data));
             });
+            socket.on('private message',function(msg){
+              $('#messages').append($('<li>').text(msg));
+            });
         });
     </script>
   </body>

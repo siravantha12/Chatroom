@@ -20,6 +20,10 @@ io.on('connection', function(socket){
     socket.on('chat message', function(msg){
         console.log('message: ' + msg);
         var i,word;
+        word = detectingWhisper(msg,"user1","user2");
+        if(word != 0){
+            io.emit('private message',msg);
+        }
         word = checkBot(msg);
         for(i=0;i<badwords.length;i++){
             if(msg == badwords[i]){
@@ -67,5 +71,7 @@ function detectingWhisper(msg,usersqlsend,usersqlrecieve){
     if(msg.indexOf("@") !== -1){
         msg = msg.replace('@'+usersqlrecieve.name+' ','');
         usersql.whisper.push(msg + ' | ' + usersqlsend.name);
+        return msg;
     }
+        return 0;
 }
