@@ -63,9 +63,9 @@ function UserConn(usersql){
     return username + "Connected.";
 }
 
-function detectingWhisper(msg,usersql){
+function detectingWhisper(msg,usersqlsend,usersqlrecieve){
     if(msg.indexOf("@") !== -1){
-        msg = msg.replace('@'+usersql.name,'');
-        usersql.whisper.push(msg);
+        msg = msg.replace('@'+usersqlrecieve.name+' ','');
+        usersql.whisper.push(msg + ' | ' + usersqlsend.name);
     }
 }
