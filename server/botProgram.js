@@ -62,3 +62,10 @@ function UserConn(usersql){
     username = "User ";
     return username + "Connected.";
 }
+
+function detectingWhisper(msg,usersql){
+    if(msg.indexOf("@") !== -1){
+        msg = msg.replace('@'+usersql.name,'');
+        usersql.whisper.push(msg);
+    }
+}
