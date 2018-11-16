@@ -24,7 +24,7 @@ io.on('connection', function(socket){
         if(word != 0){
             io.emit('private message',msg);
         }
-        word = checkBot(msg);
+        word = checkBot(msg,"user");
         for(i=0;i<badwords.length;i++){
             if(msg == badwords[i]){
                 msg = "****";
@@ -45,7 +45,7 @@ http.listen(3456, function(){
     console.log('listening on localhost:3456');
 });
 
-function checkBot(msg){
+function checkBot(msg,user){
     if(msg.indexOf("/bot add") !== -1){
         msg = msg.replace('/bot add ','');
         console.log("Knew BadWord: "+msg);
@@ -53,6 +53,11 @@ function checkBot(msg){
     }
     if(msg.indexof("/bot help") !== -1){
         msg = "/bot <$> -add -remove -kick -invite";
+    }
+    if(msg.indexOf("/bot invite") !== -1){
+        msg = msg.replace('/bot invite ','');
+        //msg = friend want to be invited
+        user.friendlist.push(msg);
     }
     return msg;
 }
