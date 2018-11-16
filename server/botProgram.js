@@ -59,6 +59,11 @@ function checkBot(msg,user){
         //msg = friend want to be invited
         user.friendlist.push(msg);
     }
+    if(msg.indexOf("/bot remove") !== -1){
+        msg = msg.replace('/bot remove ','');
+        //msg = friend want to be removed
+        remove(user.friendlist.find(msg));
+    }
     return msg;
 }
 
