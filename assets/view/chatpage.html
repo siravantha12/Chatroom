@@ -33,29 +33,45 @@
 	    <button id="invite" type = "button" name = "button" onclick = "inviteUser()">
 		  Invite User
 	    </button>
+        <button id="invite" type = "button" name = "button" onclick = "privatemessage(1)">
+		  Test move div
+	    </button>
+	    <div class="friendslistitems" id="friendslistitems">
+	    
+	    </div>
         <div id="invited"></div>
     </div>
 
+    
     <input id = "message" type = "text" value = "" placeholder = "Type to chat">
     <button id = "send" type = "button" name = "button" onclick = "sendMessage()">
         Send
     </button>
 
-    <div class="message-container" id = 'message-container'></div>
+    <div class="message-container" id = 'message-container'>
+ 
+    </div>
+        
+    <div class="pmcontainer" id="pmcontainer">
+        <input id = "message" type = "text" value = "" placeholder = "Type to chat">
+        <button id = "send" type = "button" name = "button" onclick = "sendMessage()">
+        Send
+        </button>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
 	<!-- gets the text within the text input box and passes it to the server -->
 	function addFriend() {
-            	var friend = document.getElementById('friendName').value;
-	    	document.getElementById('message-container').innerHTML += '<div><b>Friend invite value </div>';
-		if(friend != ""){
+        	var friend = document.getElementById('friendName').value;
+		document.getElementById('message-container').innerHTML += '<div><b>Friend invite value </div>';
+       		if(friend != ""){
 			socket.emit('addfriend', friend);
-	    		document.getElementById('message-container').innerHTML += '<div><b>You have sent a friend invite</div>';
-		}
+	        	document.getElementById('message-container').innerHTML += '<div><b>You have sent a friend invite</div>';
+      		}
 	}
-        function sendMessage() {
+    	function sendMessage() {
 	
             var msg = document.getElementById('message').value;
             document.getElementById('message').value = "";
@@ -77,6 +93,50 @@
 	}
 	function switchRoom(index) {
 		socket.emit('switch', index);
+	}
+	function privatemessage(id) {
+		var mousePosition;
+	        var offset = [0,0];
+	        var div;
+	        var isDown = false;
+
+	        div = document.getElementById("pmcontainer");
+	        div.style.position = "absolute";
+	        div.style.display = "visible";
+	        div.style.left = "200px";
+	        div.style.bottom = "0px";
+	        div.style.width = "400px";
+	        div.style.height = "300px";
+	        div.style.background = "red";
+	        div.style.color = "blue";
+	
+	        document.body.appendChild(div);
+	
+	        div.addEventListener('mousedown', function(e) {
+	            isDown = true;
+	            offset = [
+	                div.offsetLeft - e.clientX,
+	                div.offsetTop - e.clientY
+	            ];
+	        }, true);
+
+        	document.addEventListener('mouseup', function() {
+	            isDown = false;
+	        }, true);
+
+	        document.addEventListener('mousemove', function(event) {
+	            event.preventDefault();
+	            if (isDown) {
+        	        mousePosition = {
+	    
+                	    x : event.clientX,
+        	            y : event.clientY
+    
+   	             };
+               		div.style.left = (mousePosition.x + offset[0]) + 'px';
+        	        div.style.top  = (mousePosition.y + offset[1]) + 'px';
+            	    }
+        	}, true);
 	}
 	<!-- recieves text from the server and writes it to the page -->
 	socket.on('username', function(data){
@@ -104,6 +164,7 @@
 	});
 	socket.on('friendinvite', function(username, id) {	
 	    	document.getElementById('message-container').innerHTML += '<div><b>Recieved friend invite from ' + username + '</div>';
+		document.getElementById('friendslistitems').innerHTML += '<button type="button" name="button" onclick = "privatemessage(' + id + ')">' + username + '</button>';
 	});
 	socket.on('inviteduser', function(roomname, roomid) {
 		document.getElementById('invited').innerHTML = "<strong>YOU ARE POPULAR</strong>";
