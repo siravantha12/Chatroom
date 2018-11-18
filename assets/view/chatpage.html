@@ -1,11 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Place_Holder Chatroom</title>
-		<link rel="stylesheet" type="text/css" href="../styles/chatstyles.css">
-	</head>
+    <head>
+        <title>Socket.IO chat</title>
+        <link rel="stylesheet" type="text/css" href="../styles/chatstyles.css">
+    </head>
+    <body>
+	
+    <p id="demo"></p>
+        
+    <div class="sidenav">
+        <div id="username"></div>
+        <input class="hmbtn" type="button" name="" value="">
+        <h1>Chats
+            <input class="addbtn" type="button" name="" value="">
+        </h1>
+        <input id = "room" type = "text" value = "" placeholder = "Chat Room Name">
+	    <button id="chat" type = "button" name = "roombutton" onclick = "joinRoom()">
+		  Connect to Room
+	    </button>
+	    <div class="chatroomlist" id="chatroomlist">
+		
+	    </div>
+        <div id="roomname"></div>
+    </div>
+    <div class="friendslist">
+        <h1>Friends
+            <input class="addbtn" type="button" name="" value="">
+        </h1>
+        <input id = "inviteuser" type = "text" value = "" placeholder = "user with id">
+	    <button id="invite" type = "button" name = "button" onclick = "inviteUser()">
+		  Invite User
+	    </button>
+        <div id="invited"></div>
+    </div>
 
+<<<<<<< HEAD
+    <input id = "message" type = "text" value = "" placeholder = "Type to chat">
+    <button id = "send" type = "button" name = "button" onclick = "sendMessage()">
+        Send
+    </button>
+=======
 	<body>
 		<div class = "navbar">
 			<input class="hmbtn" type="button" name="" value="">
@@ -24,14 +58,66 @@
 			<h1>Chats
 				<input class="addbtn" type="button" name="" value="">
 			</h1>
+>>>>>>> 614c28e74a3498054dc5ab9ebdaa6276ddbe2d3d
 
-		</div>
-        <div class ="friendslist">
-        	<h1>Friends
-        		<input class="addbtn" type="button" name="" value="">
-        	</h1>
-        </div>
+    <div class="message-container" id = 'message-container'></div>
 
-	</body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+	<!-- gets the text within the text input box and passes it to the server -->
+        function sendMessage() {
+	
+            var msg = document.getElementById('message').value;
+            document.getElementById('message').value = "";
+            if(msg){
+	        socket.emit('msg', { message: msg });
+            }
+        }
+	function joinRoom() {
+		var room = document.getElementById('room').value;
+		if(room){
+			socket.emit('join', room);
+		}
+	}
+	function inviteUser() {
+		var userid = document.getElementById('inviteuser').value;
 
+		if(userid){
+			socket.emit('inviteuser', userid);
+		}
+	}
+	function switchRoom(index) {
+		socket.emit('switch', index);
+	}
+	<!-- recieves text from the server and writes it to the page -->
+	socket.on('username', function(data){
+		socket.username = data;
+		document.getElementById("username").innerHTML = data;
+	});
+        socket.on('newmsg', function(data) {
+		if(socket.username == data.username){	
+			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+		} else {
+			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+		}
+        });
+	socket.on('chatroomlist', function(roomlist) {
+		socket.roomlist = roomlist;
+		for(var i = 0; i < roomlist.length; i++){
+			document.getElementById('chatroomlist').innerHTML += '<button type="button" name="button" onclick = "switchRoom(' + i + ')">' + roomlist[i] + '</button>';
+		}
+	});
+	socket.on('allchatmessages', function(data) {
+	    	document.getElementById('message-container').innerHTML += '<div><b>Message package recieved from chatroom</div>';
+	});
+	socket.on('joinedroom', function(data) {
+		document.getElementById('roomname').innerHTML = "<strong>You are in chatroom " + data + "</strong>";
+	});
+	socket.on('inviteduser', function(roomname, roomid) {
+		document.getElementById('invited').innerHTML = "<strong>YOU ARE POPULAR</strong>";
+	        socket.emit('acceptinvite', roomname, roomid);
+	});
+    </script>
+    </body>
 </html>

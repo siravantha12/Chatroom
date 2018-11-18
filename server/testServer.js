@@ -43,7 +43,7 @@ app.get('/',function(req,res){
  * Publish chatPage.html 
  */
 app.get('/chatPage', isLoggedIn, function(req,res){
-	res.sendFile(path.join(__dirname+'/chatPage.html'));
+	res.sendFile(path.join(__dirname+'/../assets/view/chatPage.html'));
 });
 
 
@@ -51,6 +51,7 @@ app.get('/chatPage', isLoggedIn, function(req,res){
  * Control client connections. Commented out code allows sockets to be grouped into individual
  * "chat rooms" (socket groups). Commented out for ease of testing.
  */
+var currentConnections = {};
 
 io.on('connection', function(socket){
 	/*
@@ -63,22 +64,57 @@ io.on('connection', function(socket){
 		var connect_sid = parsed_cookies['connect.sid'];
 		var sessionId = connect_sid.match(/(?<=s:).*?(?=\.)/);
 		sessionStore.get(sessionId, function(error, session){
-			console.log(session.passport.user);
 			socket.userid = session.passport.user;
 			mysqlConnection.getRowById(socket.userid, function(err, result){
+				var userId = result[0].userName + socket.userid;
+				currentConnections[userId] = socket.id;
 				socket.username = result[0].userName;
-				io.to(socket.id).emit('username', socket.username);
+				io.to(socket.id).emit('username', userId);
+			});
+			mysqlConnection.getFriends(socket.userid, function(err, result){
+				io.to(socket.id).emit('friendslist', result);
+			});
+			mysqlConnection.getChatrooms(socket.userid, function(err, result){
+				var chatrooms = new Array(result.length);
+				socket.roomlist = [];
+				for(var i = 0; i < result.length; i++){
+					chatrooms[i] = result[i].roomName + "#" + result[i].roomid;
+					socket.roomlist.push(chatrooms[i]);
+				}
+				console.log("Submitting chatroom list to client");
+				io.to(socket.id).emit('chatroomlist', socket.roomlist);
+				console.log(socket.roomlist);
 			});
 		});
 	}
+
+	socket.on('switch', function(index) {
+		console.log("Switching client to room " + socket.roomlist[index]);
+		socket.leave(socket.room);
+		socket.room = socket.roomlist[index];
+		socket.join(socket.room, function(){
+			io.to(socket.id).emit('joinedroom', socket.room);
+			mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
+				io.to(socket.id).emit('allchatmessages', result);	
+			});
+		});
+
+	});
+
 	socket.on('join', function(room){
 		mysqlConnection.mysqlCreateChat(room, function(result) {
 			socket.leave(socket.room);
+			var roomname = room;
+			socket.roomname = room;
 			room = room + "#" + result.insertId;
 			socket.room = room;
 			socket.roomid = result.insertId;
-			//io.to(socket.id).emit('newmsg', data);
+			console.log("Adding chatroom id " + socket.roomid + " to user id " + socket.userid);
+			mysqlConnection.addChatroomToAccount(socket.userid, socket.roomid, function(err, result) {
+				if(err) throw err;
+			});
 			socket.join(room, function(){
+				io.to(socket.id).emit('joinedroom', roomname);
 				mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
 					io.to(socket.id).emit('allchatmessages', result);	
 				});
@@ -91,14 +127,28 @@ io.on('connection', function(socket){
  	*/
 	socket.on('msg', function(msg){
 		mysqlConnection.mysqlStoreMessage(socket.roomid, socket.userid, msg.message);
-		console.log("Message sent from " + socket.username);
 		msg.username = socket.username;
 		var date = new Date();
 		msg.date = date.toTimeString();
-		console.log(msg);
-		console.log(msg.message);
 		io.to(socket.room).emit('newmsg', msg);
-	})
+	});
+
+	socket.on('inviteuser', function(user){
+		console.log(currentConnections[user]);
+		if(currentConnections[user]){
+			io.to(currentConnections[user]).emit('inviteduser', socket.roomname, socket.roomid);
+		} 
+	});
+
+	socket.on('acceptinvite', function(room, roomid){
+		socket.leave(socket.room);
+		socket.roomname = room;
+		socket.roomid = roomid;
+		socket.room = room + "#" + roomid;
+		socket.join(socket.room, function(){
+			io.to(socket.id).emit('joinedroom', socket.roomname);
+		});
+	});
 })
 
 app.use(bodyParser.urlencoded({extended:true}));

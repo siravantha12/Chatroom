@@ -5,7 +5,14 @@
     </head>
     <body>
 
+	<div id="roomname"></div>
+	<div id="invited"></div>
+	<div id="username"></div>
         <p id="demo"></p>
+	<input id = "inviteuser" type = "text" value = "" placeholder = "user with id">
+	<button type = "button" name = "button" onclick = "inviteUser()">
+		Invite User
+	</button>
 	<input id = "room" type = "text" value = "" placeholder = "Chat Room Name">
 	<button type = "button" name = "roombutton" onclick = "joinRoom()">
 		Connect to Room
@@ -41,6 +48,13 @@
 			socket.emit('join', room);
 		}
 	}
+	function inviteUser() {
+		var userid = document.getElementById('inviteuser').value;
+
+		if(userid){
+			socket.emit('inviteuser', userid);
+		}
+	}
 	<!-- recieves text from the server and writes it to the page -->
 	socket.on('username', function(data){
 		socket.username = data;
@@ -53,8 +67,15 @@
 	    		document.getElementById('message-container').innerHTML += '<div class = "chatmessage"><strong>' + data.username + '</strong><br><p>' + data.message + '</p><span>' + data.date + '</span></div>';
 		}
         });
-	socket.on('allchatmessages', function(data) {	
+	socket.on('allchatmessages', function(data) {
 	    document.getElementById('message-container').innerHTML += '<div><b>Message package recieved from chatroom</div>';
+	});
+	socket.on('joinedroom', function(data) {
+		document.getElementById('roomname').innerHTML = "<strong>You are in chatroom " + data + "</strong>";
+	});
+	socket.on('inviteduser', function(roomname, roomid) {
+		document.getElementById('invited').innerHTML = "<strong>YOU ARE POPULAR</strong>";
+	        socket.emit('acceptinvite', roomname, roomid);
 	});
     </script>
     </body>
