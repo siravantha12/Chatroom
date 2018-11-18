@@ -1,23 +1,8 @@
-
 body{
 	margin: 0;
 	padding: 0;
 	font-family: sans-serif;
 	background-color: rgb(88,93,95);
-}
-
-.navbar{
-	position: fixed;
-	top: 0;
-	width: 100%;
-	height: 5%;
-	background-color: rgb(129, 104,161);
-}
-
-.navbar a{
-	color: rgb(255,255,255);
-	display: inline-block;
-	text-align: center;
 }
 
 form { 
@@ -93,7 +78,7 @@ button#invite, button#chat{
 	height: 50%;
 	width: 200px;
 	position: fixed;
-	top: 5%;
+	top:0;
 	background-color: rgb(49,52,53);
 	color: #fff;
 }
@@ -120,15 +105,8 @@ button#invite, button#chat{
 	height: 50%;
 	width: 200px;
 	position: fixed;
-<<<<<<< HEAD
 	top: 50%;
 	left: 0;
-=======
-	top: 5%;
-	right: 0;
->>>>>>> 614c28e74a3498054dc5ab9ebdaa6276ddbe2d3d
 	background-color: rgb(49,52,53);
 	color: #fff;
 }
-
-
