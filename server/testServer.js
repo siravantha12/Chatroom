@@ -67,7 +67,7 @@ io.on('connection', function(socket){
 			socket.userid = session.passport.user;
 			mysqlConnection.getRowById(socket.userid, function(err, result){
 				var userId = result[0].userName + socket.userid;
-				currentConnections[userId] = socket.id;
+				currentConnections[socket.userid] = socket.id;
 				socket.username = result[0].userName;
 				io.to(socket.id).emit('username', userId);
 			});
@@ -122,8 +122,17 @@ io.on('connection', function(socket){
 		});
 	});
 
+
+	socket.on('addfriend', function(friendid) {
+		console.log("Entered the add friend logic");
+		mysqlConnection.getRowById(friendid, function(err, result) {
+			if(result.length != 0) {
+				io.to(currentConnections[friendid]).emit('friendinvite', socket.username, socket.userid);
+			}
+		});
+	});
 	/*
- 	* Emit new messages when the msg even is recieved
+ 	* Emit new messages when the msg event is recieved
  	*/
 	socket.on('msg', function(msg){
 		mysqlConnection.mysqlStoreMessage(socket.roomid, socket.userid, msg.message);
@@ -134,6 +143,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('inviteuser', function(user){
+		console.log("all is needed is " + user);
 		console.log(currentConnections[user]);
 		if(currentConnections[user]){
 			io.to(currentConnections[user]).emit('inviteduser', socket.roomname, socket.roomid);
