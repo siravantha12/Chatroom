@@ -96,7 +96,13 @@ io.on('connection', function(socket){
 		socket.join(socket.room, function(){
 			io.to(socket.id).emit('joinedroom', socket.room);
 			mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
-				//console.log(result[0]);
+				for(var i = 0; i < result.length; i++) {
+					console.log(result[i]);
+					console.log(result[i].messagetime);
+					//var thingding = result[i].messagetime;
+					//matchthing += String(thingding).match(/(\d{1,2}:\d{1,2}:\d{1,2})/)[1];
+					//console.log(matchthing);
+				}
 				io.to(socket.id).emit('allchatmessages', result);	
 			});
 		});
