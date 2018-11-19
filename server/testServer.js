@@ -101,6 +101,17 @@ io.on('connection', function(socket){
 
 	});
 
+	socket.on('privatemessage', function(msg, id) {
+		console.log("sending from " + socket.userid + " To " + id);
+		console.log("The socket id for the given id of " + socket.userid + " is " + currentConnections[socket.userid]);
+		msg.username = socket.username;
+		var date = new Date();
+		msg.date = date.toTimeString();
+		console.log("Emitting the private message");
+		io.to(socket.id).emit('newprivatemessage', msg, id);
+		io.to(currentConnections[id]).emit('newprivatemessage', msg, socket.userid);
+	});
+
 	socket.on('join', function(room){
 		mysqlConnection.mysqlCreateChat(room, function(result) {
 			socket.leave(socket.room);
