@@ -4,6 +4,11 @@
         <title>Socket.IO chat</title>
         <link rel="stylesheet" type="text/css" href="../styles/chatstyles.css">
     </head>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
+        var entries = 1;
+    </script>
     <body>
 	
     <p id="demo"></p>
@@ -26,16 +31,15 @@
     <div class="friendslist">
         <h1>Friends</h1>
 	    <input id="friendName" type="text" value="" placeholder="friendsId">
-	    <button id="friendrequest" type = "button" name = "button" onclick = "addFriend()">
+	    <button id="addfriend" type = "button" name = "button" onclick = "addFriend()">
 		  Add friend
 	    </button>
-            <input id = "inviteuser" type = "text" value = "" placeholder = "user id">
-	    <button id="invite" type = "button" name = "button" onclick = "inviteUser()">
+        <input id = "inviteuser" type = "text" value = "" placeholder = "user id">
+	    <button class="sidebutton" id="invite" type = "button" name = "button" onclick = "inviteUser()">
 		  Invite User
 	    </button>
-        <button id="invite" type = "button" name = "button" onclick = "privatemessage(1)">
-		  Test move div
-	    </button>
+
+        
 	    <div class="friendslistitems" id="friendslistitems">
 	    
 	    </div>
@@ -49,34 +53,50 @@
     </button>
 
     <div class="message-container" id = 'message-container'>
- 
+
     </div>
-        
+  
     <div class="pmcontainer" id="pmcontainer">
-        <input id = "message" type = "text" value = "" placeholder = "Type to chat">
-        <button id = "send" type = "button" name = "button" onclick = "sendMessage()">
-        Send
+        <input type="button" id="closepm" value="X" onclick="hidePM()">
+        <div class="pm-messages" id="pm-messages">
+            
+        </div>
+        <input id = "messagepm" type = "text" value = "" placeholder = "Type to chat">
+        <button id = "sendpm" type = "button" name = "button">
+            Send
         </button>
     </div>
-
+        
+    </body>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io();
 	<!-- gets the text within the text input box and passes it to the server -->
+    function hidePM() {
+        document.getElementById("pmcontainer").style.visibility = "hidden";
+    }
 	function addFriend() {
-        	var friend = document.getElementById('friendName').value;
+        var friend = document.getElementById('friendName').value;
 		document.getElementById('message-container').innerHTML += '<div><b>Friend invite value </div>';
        		if(friend != ""){
 			socket.emit('addfriend', friend);
 	        	document.getElementById('message-container').innerHTML += '<div><b>You have sent a friend invite</div>';
       		}
 	}
-    	function sendMessage() {
-	
+    function sendPM(id) {
+        var msg = document.getElementById('messagepm').value;
+        document.getElementById('messagepm').value = "";
+        console.log("sending message");
+        if(msg){
+           console.log("Emitting message");
+	       socket.emit('privatemessage', { message: msg }, id);
+        }
+    }
+    function sendMessage() {
             var msg = document.getElementById('message').value;
             document.getElementById('message').value = "";
             if(msg){
-	        socket.emit('msg', { message: msg });
+	           socket.emit('msg', { message: msg });
             }
         }
 	function joinRoom() {
@@ -94,82 +114,48 @@
 	function switchRoom(index) {
 		socket.emit('switch', index);
 	}
-	function privatemessage(id) {
-		var mousePosition;
-	        var offset = [0,0];
-	        var div;
-	        var isDown = false;
-
-	        div = document.getElementById("pmcontainer");
-	        div.style.position = "absolute";
-	        div.style.display = "visible";
-	        div.style.left = "200px";
-	        div.style.bottom = "0px";
-	        div.style.width = "400px";
-	        div.style.height = "300px";
-	        div.style.background = "red";
-	        div.style.color = "blue";
-	
-	        document.body.appendChild(div);
-	
-	        div.addEventListener('mousedown', function(e) {
-	            isDown = true;
-	            offset = [
-	                div.offsetLeft - e.clientX,
-	                div.offsetTop - e.clientY
-	            ];
-	        }, true);
-
-        	document.addEventListener('mouseup', function() {
-	            isDown = false;
-	        }, true);
-
-	        document.addEventListener('mousemove', function(event) {
-	            event.preventDefault();
-	            if (isDown) {
-        	        mousePosition = {
-	    
-                	    x : event.clientX,
-        	            y : event.clientY
-    
-   	             };
-               		div.style.left = (mousePosition.x + offset[0]) + 'px';
-        	        div.style.top  = (mousePosition.y + offset[1]) + 'px';
-            	    }
-        	}, true);
+	function openPM(id) {
+        document.getElementById('message-container').innerHTML += '<div><b>PM openeed with ' + id + ' id</div>';
+		document.getElementById("sendpm").setAttribute("onclick", "sendPM(" + id + ")");
+        document.getElementById("pmcontainer").style.visibility = "visible";
 	}
 	<!-- recieves text from the server and writes it to the page -->
 	socket.on('username', function(data){
 		socket.username = data;
 		document.getElementById("username").innerHTML = data;
 	});
-        socket.on('newmsg', function(data) {
+    socket.on('newmsg', function(data) {
 		if(socket.username == data.username){	
 			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
 		} else {
 			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
 		}
-        });
+    });
 	socket.on('chatroomlist', function(roomlist) {
 		socket.roomlist = roomlist;
 		for(var i = 0; i < roomlist.length; i++){
-			document.getElementById('chatroomlist').innerHTML += '<button type="button" name="button" onclick = "switchRoom(' + i + ')">' + roomlist[i] + '</button>';
+			document.getElementById('chatroomlist').innerHTML += '<button id="invite" type="button" name="button" onclick = "switchRoom(' + i + ')">' + roomlist[i] + '</button>';
 		}
 	});
 	socket.on('allchatmessages', function(data) {
 	    	document.getElementById('message-container').innerHTML += '<div><b>Message package recieved from chatroom</div>';
 	});
 	socket.on('joinedroom', function(data) {
-		document.getElementById('roomname').innerHTML = "<strong>You are in chatroom " + data + "</strong>";
+		    document.getElementById('roomname').innerHTML = "<strong>You are in chatroom " + data + "</strong>";
 	});
 	socket.on('friendinvite', function(username, id) {	
 	    	document.getElementById('message-container').innerHTML += '<div><b>Recieved friend invite from ' + username + '</div>';
-		document.getElementById('friendslistitems').innerHTML += '<button type="button" name="button" onclick = "privatemessage(' + id + ')">' + username + '</button>';
+		    document.getElementById('friendslistitems').innerHTML += '<button type="button" name="button" onclick = "openPM(' + id + ')">' + username + '</button>';
 	});
 	socket.on('inviteduser', function(roomname, roomid) {
-		document.getElementById('invited').innerHTML = "<strong>YOU ARE POPULAR</strong>";
+		    document.getElementById('invited').innerHTML = "<strong>YOU ARE POPULAR</strong>";
 	        socket.emit('acceptinvite', roomname, roomid);
 	});
+    socket.on('newprivatemessage', function(data, id) {
+        console.log("Message recieved");
+        document.getElementById("sendpm").setAttribute("onclick", "sendPM(" + id + ")");
+        document.getElementById("pmcontainer").style.visibility = "visible";
+        document.getElementById('pm-messages').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+    });
     </script>
-    </body>
 </html>
