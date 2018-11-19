@@ -92,9 +92,11 @@ io.on('connection', function(socket){
 		console.log("Switching client to room " + socket.roomlist[index]);
 		socket.leave(socket.room);
 		socket.room = socket.roomlist[index];
+		socket.roomid = socket.room.match(/#(\d+)/)[1];
 		socket.join(socket.room, function(){
 			io.to(socket.id).emit('joinedroom', socket.room);
 			mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
+				//console.log(result[0]);
 				io.to(socket.id).emit('allchatmessages', result);	
 			});
 		});
@@ -127,6 +129,8 @@ io.on('connection', function(socket){
 			socket.join(room, function(){
 				io.to(socket.id).emit('joinedroom', roomname);
 				mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
+					console.log("The messages are shown below");
+					console.log(result[0]);
 					io.to(socket.id).emit('allchatmessages', result);	
 				});
 			});
@@ -146,6 +150,9 @@ io.on('connection', function(socket){
  	* Emit new messages when the msg event is recieved
  	*/
 	socket.on('msg', function(msg){
+		console.log(socket.roomid);
+		console.log(socket.userid);
+		console.log(msg.message);
 		mysqlConnection.mysqlStoreMessage(socket.roomid, socket.userid, msg.message);
 		msg.username = socket.username;
 		var date = new Date();
