@@ -112,6 +112,7 @@
 		}
 	}
 	function switchRoom(index) {
+		document.getElementById('message-container').innerHTML = '';
 		socket.emit('switch', index);
 	}
 	function openPM(id) {
@@ -138,7 +139,9 @@
 		}
 	});
 	socket.on('allchatmessages', function(data) {
-	    	document.getElementById('message-container').innerHTML += '<div><b>Message package recieved from chatroom</div>';
+		for(var i = 0; i < data.length; i++) {
+			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data[i].userName + "</strong><br>" + data[i].chatmessage + "<br>" + data[i].messagetime + "</div>";
+		}
 	});
 	socket.on('joinedroom', function(data) {
 		    document.getElementById('roomname').innerHTML = "<strong>You are in chatroom " + data + "</strong>";
