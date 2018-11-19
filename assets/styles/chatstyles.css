@@ -72,6 +72,8 @@ button#invite, button#chat, button#addfriend{
     left: 220px;
     background-color: aliceblue;
     border-radius: 10px;
+    overflow-y: scroll;
+    overflow: auto;
 }
 
 .pmcontainer {
