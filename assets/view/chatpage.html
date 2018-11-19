@@ -124,13 +124,13 @@
 		socket.username = data;
 		document.getElementById("username").innerHTML = data;
 	});
-    socket.on('newmsg', function(data) {
+   	socket.on('newmsg', function(data) {
 		if(socket.username == data.username){	
 			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
 		} else {
 			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
 		}
-    });
+    	});
 	socket.on('chatroomlist', function(roomlist) {
 		socket.roomlist = roomlist;
 		for(var i = 0; i < roomlist.length; i++){
@@ -151,11 +151,11 @@
 		    document.getElementById('invited').innerHTML = "<strong>YOU ARE POPULAR</strong>";
 	        socket.emit('acceptinvite', roomname, roomid);
 	});
-    socket.on('newprivatemessage', function(data, id) {
-        console.log("Message recieved");
-        document.getElementById("sendpm").setAttribute("onclick", "sendPM(" + id + ")");
-        document.getElementById("pmcontainer").style.visibility = "visible";
-        document.getElementById('pm-messages').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
-    });
+    	socket.on('newprivatemessage', function(data, id) {
+        	console.log("Message recieved");
+        	document.getElementById("sendpm").setAttribute("onclick", "sendPM(" + id + ")");
+        	document.getElementById("pmcontainer").style.visibility = "visible";
+        	document.getElementById('pm-messages').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+    	});
     </script>
 </html>
