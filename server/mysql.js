@@ -22,6 +22,30 @@ function createConnection() {
 	return con;
 }
 
+exports.addChatroomToAccount = function(userid, chatroomid, callback) {
+	baseConnection.query("insert into roomusers values (" + chatroomid + "," + userid + ");", function (err, result, fields){
+		callback(err, result);
+	});
+}
+
+exports.getChatrooms = function(userid, callback){
+	baseConnection.query("select r.roomid, c.roomName from roomusers r join chatrooms c on r.roomid = c.roomid where r.accountNumber = " + userid + ";", function (err, result, fields){
+		callback(err, result);
+	});
+}
+
+exports.addFriends = function(userid1, userid2, callback){
+	baseConnection.query("insert into friends values (" + userid1 + "," +userid2 +");", function (err, result, fields) {
+		callback(err, result);
+	});
+}
+
+exports.getFriends = function(userid, callback) {
+	baseConnection.query("select f.friendid2, c.userName from friends f join chataccounts c on c.accountNumber = f.friendid2 where friendid1 = " + userid + ";", function (err, result, fields) {
+		callback(err, result);
+	});
+}
+
 exports.getMessagesForRoom = function(roomid, callback){
 	baseConnection.query("select userName, messagetime, chatmessage from chatroommessages natural join chataccounts where roomid = " + roomid + ";", function (err, result, fields){
 		callback(err, result);
@@ -61,9 +85,6 @@ function mysqlValidateUser(userName, password, callback){
 	});
 }
 
-/*
- * Function to create a chatroom given a chatname, privateLock (is the chatroom private), and a password if the chat is private
- */
 exports.mysqlCreateChat = function(chatName, callback){
 	baseConnection.query("insert into chatrooms (roomName) values ('" + chatName + "');", function(err, result, fields){
 		if(err) throw err;

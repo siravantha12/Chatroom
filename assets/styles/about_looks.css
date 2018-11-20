@@ -1,0 +1,20 @@
+body{
+	font-size: 20px;
+	margin-right: 200px;
+	background-color: gray;
+	position: absolute;
+	bottom: 40px;
+	text-align: center;
+	font-family: "Helvetica", Times, serif;
+	position: fixed;
+
+}
+h1{
+	color: darkgray;
+}
+
+.about{
+	background-color: lightgray;
+	border-radius: 10px;
+	position: center;
+}
