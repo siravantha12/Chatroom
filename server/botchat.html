@@ -54,7 +54,10 @@
 
         function botactivated(checkbox){
           if(checkbox.checked){
-
+            socket.on("connect", function(){
+              console.log("connected!")
+              socket.emit("sendVar", variableFromFrontEnd);
+            });
           }
         }
     </script>

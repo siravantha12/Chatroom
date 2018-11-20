@@ -17,6 +17,9 @@ io.on('connection', function(socket){
     //Emits to all people beside sender (user that have connected) that a user connected
     socket.broadcast.emit('username', "Test");
     socket.broadcast.emit('chat message', UserConn("user"));
+    socket.on("sendVar", function(value){
+        console.log("The value of the variable is " + value);
+    });
     socket.on('chat message', function(msg){
         console.log('message: ' + msg);
         var i,word;
