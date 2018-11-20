@@ -126,8 +126,10 @@
 		document.getElementById("username").innerHTML = data;
 	});
    	socket.on('newmsg', function(data) {
-		if(socket.username == data.username){	
-			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+		console.log("The message user name is" + data.username);
+		console.log("The socket username is " + socket.username);
+		if(socket.username == data.username + data.userid){	
+			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage" id="personal"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
 		} else {
 			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
 		}
@@ -140,7 +142,11 @@
 	});
 	socket.on('allchatmessages', function(data) {
 		for(var i = 0; i < data.length; i++) {
-			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data[i].userName + "</strong><br>" + data[i].chatmessage + "<br>" + data[i].messagetime + "</div>";
+			if(socket.username == data[i].userName + data[i].accountNumber) {
+				document.getElementById('message-container').innerHTML += '<br><div class="chatmessage" id="personal"><strong>' + data[i].userName + "</strong><br>" + data[i].chatmessage + "<br>" + data[i].messagetime + "</div>";
+			} else {
+				document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data[i].userName + "</strong><br>" + data[i].chatmessage + "<br>" + data[i].messagetime + "</div>";
+			}
 		}
 	});
 	socket.on('joinedroom', function(data) {
