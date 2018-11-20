@@ -22,7 +22,7 @@
   </head>
   <body>
     <ul class="navbar" id="username">
-        <input type="checkbox" id="botactive"> Bot Active</input>
+        <input type="checkbox" name="botactive"  id="botact" onclick="botactivated(this)" /> Bot Active
     </ul>
     <ul id="messages"></ul>
     <form action="">
@@ -51,6 +51,12 @@
               $('#messages').append($('<li>').text(msg));
             });
         });
+
+        function botactivated(checkbox){
+          if(checkbox.checked){
+
+          }
+        }
     </script>
   </body>
 </html>
