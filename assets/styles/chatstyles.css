@@ -65,6 +65,9 @@ button#invite, button#chat, button#addfriend{
     border-radius: 10px;
 }
 
+#personal {
+    background-color: lightgray;
+}
 .message-container {
     position: fixed;
     width: 88%;
