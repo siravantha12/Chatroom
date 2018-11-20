@@ -47,7 +47,7 @@ exports.getFriends = function(userid, callback) {
 }
 
 exports.getMessagesForRoom = function(roomid, callback){
-	baseConnection.query("select userName, messagetime, chatmessage from chatroommessages natural join chataccounts where roomid = " + roomid + ";", function (err, result, fields){
+	baseConnection.query("select userName, messagetime, accountNumber, chatmessage from chatroommessages natural join chataccounts where roomid = " + roomid + ";", function (err, result, fields){
 		callback(err, result);
 	});
 }
