@@ -66,7 +66,10 @@ io.on('connection', function(socket){
 		sessionStore.get(sessionId, function(error, session){
 			socket.userid = session.passport.user;
 			mysqlConnection.getRowById(socket.userid, function(err, result){
+				console.log("This is the initial part");
+				console.log(result[0].userName);
 				var userId = result[0].userName + socket.userid;
+				socket.fullUserName = userId;
 				currentConnections[socket.userid] = socket.id;
 				socket.username = result[0].userName;
 				io.to(socket.id).emit('username', userId);
@@ -110,7 +113,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('privatemessage', function(msg, id) {
-		console.log("sending from " + socket.userid + " To " + id);
+		console.log("sending from " + socket.userid + " To "  + id);
 		console.log("The socket id for the given id of " + socket.userid + " is " + currentConnections[socket.userid]);
 		msg.username = socket.username;
 		var date = new Date();
@@ -161,6 +164,7 @@ io.on('connection', function(socket){
 		console.log(msg.message);
 		mysqlConnection.mysqlStoreMessage(socket.roomid, socket.userid, msg.message);
 		msg.username = socket.username;
+		msg.userid = socket.userid;
 		var date = new Date();
 		msg.date = date.toTimeString();
 		io.to(socket.room).emit('newmsg', msg);
