@@ -1,19 +1,23 @@
 body{
 	font-size: 20px;
 	margin-right: 200px;
+	margin-top: 50px;
 	background-color: gray;
-	position: absolute;
+	position: relative;
 	bottom: 40px;
 	text-align: center;
 	font-family: "Helvetica", Times, serif;
-	position: fixed;
+	overflow-y: scroll;
 
 }
 h1{
 	color: darkgray;
 }
 
+
+
 .about{
+	margin-top: 30px;
 	background-color: lightgray;
 	border-radius: 10px;
 	position: center;
