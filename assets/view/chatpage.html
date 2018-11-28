@@ -4,10 +4,43 @@
         <title>Socket.IO chat</title>
         <link rel="stylesheet" type="text/css" href="../styles/chatstyles.css">
     </head>
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-        <script>
-        var entries = 1;
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        function Confirm(title, msg, $true, $false, $name, $id, $option) { 
+        var $content =  "<div class='dialog-ovelay'>" +
+                        "<div class='dialog'><header>" +
+                         " <h3> " + title + " </h3> " +
+                         "<i class='fa fa-close'></i>" +
+                     "</header>" +
+                     "<div class='dialog-msg'>" +
+                         " <p> " + msg + " </p> " +
+                     "</div>" +
+                     "<footer>" +
+                         "<div class='controls'>" +
+                             " <button class='button button-danger doAction'>" + $true + "</button> " +
+                             " <button class='button button-default cancelAction'>" + $false + "</button> " +
+                         "</div>" +
+                     "</footer>" +
+                  "</div>" +
+                "</div>";
+         $('body').prepend($content);
+      $('.doAction').click(function () {
+        $(this).parents('.dialog-ovelay').fadeOut(500, function () {
+          $(this).remove();
+        });
+        if($option) {
+            confirmFriend($name, $id);
+        } else {
+            confirmRoomInvite($name, $id);
+        }
+      });
+      $('.cancelAction, .fa-close').click(function () {
+        $(this).parents('.dialog-ovelay').fadeOut(500, function () {
+          $(this).remove();
+        });
+      });
+      
+   }
     </script>
     <body>
 	
@@ -17,11 +50,14 @@
         <div id="username"></div>
         <input class="hmbtn" type="button" name="" value="">
         <h1>Chats
-            <input class="addbtn" type="button" name="" value="">
         </h1>
         <input id = "room" type = "text" value = "" placeholder = "Chat Room Name">
 	    <button id="chat" type = "button" name = "roombutton" onclick = "joinRoom()">
 		  Connect to Room
+	    </button>
+            <input id = "inviteuser" type = "text" value = "" placeholder = "user id">
+	    <button class="sidebutton" id="invite" type = "button" name = "button" onclick = "inviteUser()">
+		  Invite User
 	    </button>
 	    <div class="chatroomlist" id="chatroomlist">
 		
@@ -30,16 +66,10 @@
     </div>
     <div class="friendslist">
         <h1>Friends</h1>
-	    <input id="friendName" type="text" value="" placeholder="friendsId">
+	    <input id="friendName" type="text" value="" placeholder="friend's Id">
 	    <button id="addfriend" type = "button" name = "button" onclick = "addFriend()">
 		  Add friend
 	    </button>
-        <input id = "inviteuser" type = "text" value = "" placeholder = "user id">
-	    <button class="sidebutton" id="invite" type = "button" name = "button" onclick = "inviteUser()">
-		  Invite User
-	    </button>
-
-        
 	    <div class="friendslistitems" id="friendslistitems">
 	    
 	    </div>
@@ -77,10 +107,9 @@
     }
 	function addFriend() {
         var friend = document.getElementById('friendName').value;
-		document.getElementById('message-container').innerHTML += '<div><b>Friend invite value </div>';
        		if(friend != ""){
 			socket.emit('addfriend', friend);
-	        	document.getElementById('message-container').innerHTML += '<div><b>You have sent a friend invite</div>';
+
       		}
 	}
     function sendPM(id) {
@@ -112,32 +141,42 @@
 		}
 	}
 	function switchRoom(index) {
+        var allButtons = document.getElementsByClassName("chatButtonActive");
+        for(i = 0; i < allButtons.length; i++) {
+            allButtons[i].style.background = "rgb(129, 104,161)";
+        }
+        var buttonClick = document.getElementById(index);
+        buttonClick.style.background = "rgb(115,115,115)";
 		document.getElementById('message-container').innerHTML = '';
+		console.log("Switching to room index " + index);
 		socket.emit('switch', index);
 	}
 	function openPM(id) {
-        document.getElementById('message-container').innerHTML += '<div><b>PM openeed with ' + id + ' id</div>';
 		document.getElementById("sendpm").setAttribute("onclick", "sendPM(" + id + ")");
         document.getElementById("pmcontainer").style.visibility = "visible";
 	}
 	<!-- recieves text from the server and writes it to the page -->
-	socket.on('username', function(data){
+	socket.on('username', function(data, name){
 		socket.username = data;
+        socket.name = name;
 		document.getElementById("username").innerHTML = data;
 	});
    	socket.on('newmsg', function(data) {
 		console.log("The message user name is" + data.username);
 		console.log("The socket username is " + socket.username);
-		if(socket.username == data.username + data.userid){	
+		console.log("These values should match the data username of " + data.username + data.userid);
+		if(socket.username == data.username + data.userid) {
+			console.log("Making the message personal");
 			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage" id="personal"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
 		} else {
+			console.log("Making the message not personal");
 			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
 		}
     	});
 	socket.on('chatroomlist', function(roomlist) {
 		socket.roomlist = roomlist;
 		for(var i = 0; i < roomlist.length; i++){
-			document.getElementById('chatroomlist').innerHTML += '<button id="invite" type="button" name="button" onclick = "switchRoom(' + i + ')">' + roomlist[i] + '</button>';
+			document.getElementById('chatroomlist').innerHTML += '<div class="chatroombutton"><button class="chatButtonActive" type="button" name="button" id=' + i + ' onclick = "switchRoom(' + i + ')">' + roomlist[i] + '</button></div>';
 		}
 	});
 	socket.on('allchatmessages', function(data) {
@@ -149,22 +188,64 @@
 			}
 		}
 	});
-	socket.on('joinedroom', function(data) {
-		    document.getElementById('roomname').innerHTML = "<strong>You are in chatroom " + data + "</strong>";
+	socket.on('joinedroomNEW', function(roomname, roomid) {
+		    if(socket.roomlist) {
+                 console.log("The user has chatrooms");
+                 console.log("Pushing to list " + roomname + "#" + roomid);
+			     socket.roomlist.push(roomname + "#" + roomid);
+			     console.log("The socket roomlist length is " + socket.roomlist.length);
+                 console.log("The roomid that will be used is " + (socket.roomlist.length - 1));
+			     document.getElementById('chatroomlist').innerHTML += '<div class="chatroombutton"><button class="chatButtonActive" type="button" name="button" id=' + (socket.roomlist.length -1) + ' onclick = "switchRoom(' + (socket.roomlist.length -1) + ')">' + socket.roomlist[(socket.roomlist.length-1)] + '</button></div>';
+            } else {
+			     console.log("The user has no chatrooms");
+			     var roomlist = [roomname + "#" + roomid];
+			     socket.roomlist = roomlist;
+			     document.getElementById('chatroomlist').innerHTML += '<div class="chatroombutton"><button class="chatButtonActive" type="button" name="button" id=' + 0 + ' onclick = "switchRoom(' + 0 + ')">' + roomlist[0] + '</button></div>';
+		    }
 	});
-	socket.on('friendinvite', function(username, id) {	
-	    	document.getElementById('message-container').innerHTML += '<div><b>Recieved friend invite from ' + username + '</div>';
-		    document.getElementById('friendslistitems').innerHTML += '<button type="button" name="button" onclick = "openPM(' + id + ')">' + username + '</button>';
+	socket.on('friendinvite', function(username, id) {
+        Confirm("Friend Invite", "You have recieved a friend invite from " + username + " would you like to accept?", "Yes", "No", username, id, true);
 	});
+    function confirmFriend(username, id) {
+        
+        document.getElementById('friendslistitems').innerHTML += '<div class="friendbutton"><button type="button" name="button" onclick = "openPM(' + id + ')">' + username + '</button></div>';
+    }
 	socket.on('inviteduser', function(roomname, roomid) {
-		    document.getElementById('invited').innerHTML = "<strong>YOU ARE POPULAR</strong>";
-	        socket.emit('acceptinvite', roomname, roomid);
+		console.log("Attempting to join room" + roomname + " " + roomid);
+        Confirm("Friend Invite", "You have room invitation to " + roomname + " would you like to accept?", "Yes", "No", roomname, roomid, false);
 	});
+        function confirmRoomInvite(roomname, roomid) {
+            console.log("The room id is " + roomid);
+            if(socket.roomlist) {
+                 console.log("The user has chatrooms");
+			     socket.roomlist.push(roomname + "#" + roomid);
+			     console.log("The socket roomlist length is " + socket.roomlist.length);
+                 console.log("The roomid that will be used is " + (socket.roomlist.length - 1));
+			     document.getElementById('chatroomlist').innerHTML += '<div class="chatroombutton"><button class="chatButtonActive" type="button" name="button" id=' + (socket.roomlist.length -1) + ' onclick = "switchRoom(' + (socket.roomlist.length -1) + ')">' + socket.roomlist[(socket.roomlist.length-1)] + '</button></div>';
+            } else {
+			     console.log("The user has no chatrooms");
+			     var roomlist = [roomname + "#" + roomid];
+			     socket.roomlist = roomlist;
+			     document.getElementById('chatroomlist').innerHTML += '<div class="chatroombutton"><button class="chatButtonActive" type="button" name="button" id=' + 0 + ' onclick = "switchRoom(' + 0 + ')">' + roomlist[0] + '</button></div>';
+		    }
+	        socket.emit('acceptinvite', roomname, roomid);
+        }
     	socket.on('newprivatemessage', function(data, id) {
         	console.log("Message recieved");
         	document.getElementById("sendpm").setAttribute("onclick", "sendPM(" + id + ")");
         	document.getElementById("pmcontainer").style.visibility = "visible";
-        	document.getElementById('pm-messages').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+            console.log("Recieving message inside pm");
+            console.log("data username is " + data.username);
+            console.log("Socket username is " + socket.username);
+            if(data.username == socket.name) {
+                console.log("The message is personal");
+                document.getElementById('pm-messages').innerHTML += '<br><div class="chatmessage" id="personal"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+            } else {
+        	   document.getElementById('pm-messages').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+            }
+            
     	});
+        
+        
     </script>
 </html>
