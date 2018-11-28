@@ -67,6 +67,12 @@ function checkBot(msg,user){
         //msg = friend want to be removed
         remove(user.friendlist.find(msg));
     }
+
+    if(msg.indexOf("/bot kick") !== -1){
+        msg = msg.replace('/bot kick ','');
+        //msg = user that is kicked
+        kick(user.chatroom[so].find(msg));
+    }
     return msg;
 }
 
