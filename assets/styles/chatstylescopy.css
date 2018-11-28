@@ -43,10 +43,11 @@ form button {
 	height: 100%;
 	width: 20%;
 	position: fixed;
-	top:0;
+	top:50px;
 	background-color: rgb(49,52,53);
 	color: #fff;
 }
+
 
 .hmbtn{
 	background: url(../styles/smallLogo.png) no-repeat center;
@@ -70,16 +71,23 @@ form button {
 	height: 100%;
 	width: 20%;
 	position: fixed;
-	top: 0;
+	top: 50px;
 	right: 0;
 	background-color: rgb(49,52,53);
 	color: #fff;
 }
 
 .navbar{
-	background-color: purple;
+	background-color: rgb(143,153,163);
 	width: 100%;
-	height: 30px;
-	color:white;
+	height: 50px;
+	color: #fff;
 	text-align: center;
+}
+
+.active{
+	color: #fff;
+	font-size: 30px;
+	font-family: sans-serif;
+	padding: 20px;
 }

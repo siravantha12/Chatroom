@@ -1,20 +1,30 @@
 body{
 	font-size: 20px;
 	margin-right: 200px;
+	margin-top: 50px;
 	background-color: gray;
-	position: absolute;
 	bottom: 40px;
 	text-align: center;
 	font-family: "Helvetica", Times, serif;
-	position: fixed;
 
 }
 h1{
-	color: darkgray;
+	color: lightgray;
 }
 
 .about{
+	margin-top: 30px;
 	background-color: lightgray;
 	border-radius: 10px;
 	position: center;
+}
+
+::-webkit-scrollbar{
+	width:12px;
+}
+		
+::-webkit-scrollbar-thumb{
+	border-radius: 20px;
+
+	background: #c2c9d2;
 }
