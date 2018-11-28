@@ -72,7 +72,7 @@ io.on('connection', function(socket){
 				socket.fullUserName = userId;
 				currentConnections[socket.userid] = socket.id;
 				socket.username = result[0].userName;
-				io.to(socket.id).emit('username', userId);
+				io.to(socket.id).emit('username', userId, socket.username);
 			});
 			mysqlConnection.getFriends(socket.userid, function(err, result){
 				io.to(socket.id).emit('friendslist', result);
@@ -95,7 +95,11 @@ io.on('connection', function(socket){
 		console.log("Switching client to room " + socket.roomlist[index]);
 		socket.leave(socket.room);
 		socket.room = socket.roomlist[index];
+		console.log("The room is now " + socket.room);
 		socket.roomid = socket.room.match(/#(\d+)/)[1];
+		console.log("The room id is now " + socket.roomid);
+		socket.roomname = socket.room.match(/([^#]+)/)[1];
+		console.log("The socket room name is now " + socket.roomname);
 		socket.join(socket.room, function(){
 			io.to(socket.id).emit('joinedroom', socket.room);
 			mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
@@ -131,12 +135,13 @@ io.on('connection', function(socket){
 			room = room + "#" + result.insertId;
 			socket.room = room;
 			socket.roomid = result.insertId;
+			socket.roomlist.push(room);
 			console.log("Adding chatroom id " + socket.roomid + " to user id " + socket.userid);
 			mysqlConnection.addChatroomToAccount(socket.userid, socket.roomid, function(err, result) {
 				if(err) throw err;
 			});
 			socket.join(room, function(){
-				io.to(socket.id).emit('joinedroom', roomname);
+				io.to(socket.id).emit('joinedroomNEW', roomname, socket.roomid);
 				mysqlConnection.getMessagesForRoom(socket.roomid, function(err, result){
 					console.log("The messages are shown below");
 					console.log(result[0]);
@@ -159,7 +164,7 @@ io.on('connection', function(socket){
  	* Emit new messages when the msg event is recieved
  	*/
 	socket.on('msg', function(msg){
-		console.log(socket.roomid);
+		console.log("Inside msg room id is " + socket.roomid);
 		console.log(socket.userid);
 		console.log(msg.message);
 		mysqlConnection.mysqlStoreMessage(socket.roomid, socket.userid, msg.message);
@@ -173,6 +178,7 @@ io.on('connection', function(socket){
 	socket.on('inviteuser', function(user){
 		console.log("all is needed is " + user);
 		console.log(currentConnections[user]);
+		console.log("The socket room name is " + socket.roomname);
 		if(currentConnections[user]){
 			io.to(currentConnections[user]).emit('inviteduser', socket.roomname, socket.roomid);
 		} 
@@ -183,6 +189,14 @@ io.on('connection', function(socket){
 		socket.roomname = room;
 		socket.roomid = roomid;
 		socket.room = room + "#" + roomid;
+		if(socket.roomlist) {
+			socket.roomlist.push(socket.room);
+		} else {
+			socket.roomlist = [socket.room];
+		}
+		mysqlConnection.addChatroomToAccount(socket.userid, socket.roomid, function(err, result) {
+			if(err) throw err;
+		});
 		socket.join(socket.room, function(){
 			io.to(socket.id).emit('joinedroom', socket.roomname);
 		});
