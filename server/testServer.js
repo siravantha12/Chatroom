@@ -106,6 +106,8 @@ io.on('connection', function(socket){
 				for(var i = 0; i < result.length; i++) {
 					console.log(result[i]);
 					console.log(result[i].messagetime);
+					var date = new Date(result[i].messagetime);
+					console.log(date.getDate());
 					//var thingding = result[i].messagetime;
 					//matchthing += String(thingding).match(/(\d{1,2}:\d{1,2}:\d{1,2})/)[1];
 					//console.log(matchthing);
