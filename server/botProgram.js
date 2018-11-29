@@ -4,6 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require("path");
 var badwords = ["fuck"];
+var users = [];
 app.use(express.static(__dirname + "/../assets"));
 
 app.get('/',function(req,res){
@@ -65,13 +66,13 @@ function checkBot(msg,user){
     if(msg.indexOf("/bot remove") !== -1){
         msg = msg.replace('/bot remove ','');
         //msg = friend want to be removed
-        remove(user.friendlist.find(msg));
+        remove(msg);
     }
 
     if(msg.indexOf("/bot kick") !== -1){
         msg = msg.replace('/bot kick ','');
         //msg = user that is kicked
-        kick(user.chatroom[so].find(msg));
+        kick(msg);
     }
     return msg;
 }
@@ -84,6 +85,20 @@ function UserDisc(usersql){
 function UserConn(usersql){
     username = "User ";
     return username + "Connected.";
+}
+
+function remove(user){
+    mysql.users.find(this).friendlist.kick(user);
+
+}
+
+function kick(user){
+    var i;
+    for(i = 0; i < users.length;i++){
+        if(user == users[i]){
+            users[i].rooms.remove(this);
+        }
+    }
 }
 
 function detectingWhisper(msg,usersqlsend,usersqlrecieve){
