@@ -165,12 +165,18 @@
 		console.log("The message user name is" + data.username);
 		console.log("The socket username is " + socket.username);
 		console.log("These values should match the data username of " + data.username + data.userid);
+        
+        var date = new Date();
+        var minutes = date.getMinutes();
+        if(minutes < 10) {
+            minutes = "0" + minutes;
+        }
 		if(socket.username == data.username + data.userid) {
 			console.log("Making the message personal");
-			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage" id="personal"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage" id="personal"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + date.getHours() + ":" + minutes + " " + (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear() + '</div>';
 		} else {
 			console.log("Making the message not personal");
-			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+			document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.message + "<br>" + date.getHours() + ":" + minutes + " " + (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear() +'</div>';
 		}
     	});
 	socket.on('chatroomlist', function(roomlist) {
@@ -181,10 +187,17 @@
 	});
 	socket.on('allchatmessages', function(data) {
 		for(var i = 0; i < data.length; i++) {
+            var date = new Date(data[i].messagetime);
+            var minutes = date.getMinutes();
+            if(minutes < 10) {
+                minutes = "0" + minutes;
+            }
+            console.log(socket.username + " it should be " + data[i].userName + data[i].accountNumber);
 			if(socket.username == data[i].userName + data[i].accountNumber) {
-				document.getElementById('message-container').innerHTML += '<br><div class="chatmessage" id="personal"><strong>' + data[i].userName + "</strong><br>" + data[i].chatmessage + "<br>" + data[i].messagetime + "</div>";
+                console.log("Making it personal");
+				document.getElementById('message-container').innerHTML += '<br><div class="chatmessage" id="personal"><strong>' + data[i].userName + "</strong><br>" + data[i].chatmessage + "<br>" + date.getHours() + ":" + minutes + " "+ (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear() + "</div>";
 			} else {
-				document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data[i].userName + "</strong><br>" + data[i].chatmessage + "<br>" + data[i].messagetime + "</div>";
+				document.getElementById('message-container').innerHTML += '<br><div class="chatmessage"><strong>' + data[i].userName + "</strong><br>" + data[i].chatmessage + "<br>" + date.getHours() + ":" + minutes + " "+ (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear() + "</div>";
 			}
 		}
 	});
@@ -234,14 +247,16 @@
         	console.log("Message recieved");
         	document.getElementById("sendpm").setAttribute("onclick", "sendPM(" + id + ")");
         	document.getElementById("pmcontainer").style.visibility = "visible";
-            console.log("Recieving message inside pm");
-            console.log("data username is " + data.username);
-            console.log("Socket username is " + socket.username);
+            var date = new Date();
+            var minutes = date.getMinutes();
+            if(minutes < 10) {
+                minutes = "0" + minutes;
+            }
             if(data.username == socket.name) {
                 console.log("The message is personal");
-                document.getElementById('pm-messages').innerHTML += '<br><div class="chatmessage" id="personal"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+                document.getElementById('pm-messages').innerHTML += '<br><div class="chatmessage" id="personal"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + date.getHours() + ":" + minutes + " "+ (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear() + '</div>';
             } else {
-        	   document.getElementById('pm-messages').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + data.date + '</div>';
+        	   document.getElementById('pm-messages').innerHTML += '<br><div class="chatmessage"><strong>' + data.username + "</strong><br>" + data.message + "<br>" + date.getHours() + ":" + minutes + " "+ (date.getMonth()+1) + "-" + date.getDate() + "-" + date.getFullYear() + '</div>';
             }
             
     	});

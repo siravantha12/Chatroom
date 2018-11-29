@@ -25,10 +25,14 @@ body{
 	color: rgb(158,238,250);
 }
 
+::placeholder {
+    color: white;
+}
+
 .textbox input{
 	overflow: hidden;
 	background: none;
-	color: black;
+	color: white;
 	font-size: 20px;
 	width: 300px;
 	height: 70px;
@@ -36,7 +40,6 @@ body{
 	border-left: none;
 	border-right: none;
 	border-top: none;
-	
 	margin: 10 10px;
 }
 
@@ -48,6 +51,15 @@ body{
 	color: rgb(95, 98, 160);
 	border: none;
 	background-color: rgb(158,238,250);
+	cursor: pointer;
+}
+
+.secondbtn {
+	margin-top: 20px;
+	font-size: 20px;
+	color: rgb(95, 98, 160);
+	border: none;
+	background-color: lavender;
 	cursor: pointer;
 }
 
@@ -74,8 +86,12 @@ body{
     padding-top: 50px;
 }
 
+.modal h1 {
+    color: black;
+}
+
 .modal-content {
-    background-color: #fefefe;
+    background-color: lightgray;
     margin: 5% auto 15% auto; 
     border: 1px solid #888;
     width: 80%; 
